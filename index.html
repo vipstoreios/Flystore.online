@@ -1,155 +1,153 @@
-<!DOCTYPE html>
-<html lang="ku" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خزمەتگوزارییەکان لە تەنیشت یەک</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --bg: #f3f4f6;
+‏<!DOCTYPE html>
+‏<html lang="ku" dir="rtl">
+‏<head>
+‏    <meta charset="UTF-8">
+‏    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+‏    <title>Fly Store VIP</title>
+‏    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+‏    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+‏    <style>
+‏        :root {
+‏            --bg: #f1f5f9;
+‏            --card-bg: #ffffff;
+‏            --text-main: #1e293b;
+‏            --text-dim: #64748b;
+‏            --primary: #0088cc;
+‏            --danger: #ef4444; /* ڕەنگی سوور */
+‏            --insta: #e1306c;
         }
 
-        body {
-            font-family: 'Vazirmatn', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 20px;
+‏        [data-theme="dark"] {
+‏            --bg: #0f172a;
+‏            --card-bg: #1e293b;
+‏            --text-main: #f8fafc;
+‏            --text-dim: #94a3b8;
         }
 
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
+‏        body {
+‏            font-family: 'Vazirmatn', sans-serif;
+‏            background-color: var(--bg);
+‏            color: var(--text-main);
+‏            margin: 0;
+‏            padding: 40px 20px;
+‏            transition: 0.3s;
+‏            min-height: 100vh;
+‏            display: flex;
+‏            flex-direction: column;
         }
 
-        h1 { text-align: center; color: #111827; margin-bottom: 40px; }
-
-        /* لێرەدا کارتەکان لە تەنیشت یەک ڕیز دەکرێن */
-        .services-grid {
-            display: grid;
-            /* دروستکردنی ٤ ستوون لە تەنیشت یەک بۆ شاشەی گەورە */
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 15px; /* مەودای نێوان کارتەکان */
+‏        .theme-toggle {
+‏            position: fixed; top: 20px; left: 20px;
+‏            background: var(--card-bg); border: 1px solid var(--text-dim);
+‏            color: var(--text-main); padding: 10px; border-radius: 50%;
+‏            cursor: pointer; width: 45px; height: 45px;
+‏            display: flex; align-items: center; justify-content: center;
+‏            font-size: 20px; z-index: 1000;
         }
 
-        /* بۆ ئەوەی لە مۆبایل و تابلێت تێک نەچێت */
-        @media (max-width: 1024px) {
-            .services-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 600px) {
-            .services-grid { grid-template-columns: 1fr; }
-        }
+‏        .container { max-width: 1100px; width: 100%; margin: 0 auto; flex: 1; }
+‏        h1 { text-align: center; font-weight: 900; font-size: 2.2rem; margin-bottom: 50px; }
 
-        .service-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #e5e7eb;
+‏        .services-grid {
+‏            display: flex; justify-content: center; flex-wrap: wrap; gap: 25px;
         }
 
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            border-color: var(--primary);
+‏        .service-card {
+‏            background: var(--card-bg); border-radius: 24px; padding: 25px;
+‏            text-align: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+‏            transition: 0.3s; width: 300px; display: flex; flex-direction: column;
+‏            border: 1px solid rgba(0,0,0,0.05);
         }
 
-        .icon { font-size: 35px; margin-bottom: 10px; }
-        h3 { font-size: 1.1rem; margin: 10px 0; color: #1f2937; }
-        p { font-size: 0.85rem; color: #6b7280; flex-grow: 1; margin-bottom: 15px; }
+‏        .service-card:hover { transform: translateY(-10px); }
+‏        .icon { font-size: 50px; margin-bottom: 15px; }
+‏        h3 { font-size: 1.4rem; margin: 10px 0; color: var(--primary); }
+‏        .short-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 15px; flex-grow: 1; text-align: justify; }
+        
+        /* ستایلی نرخ و دەقی جێگرەوە */
+‏        .status-text { font-size: 1.1rem; font-weight: 700; color: #f59e0b; margin-bottom: 20px; min-height: 40px; }
+‏        .price { font-size: 1.7rem; font-weight: 900; margin-bottom: 20px; }
 
-        .btn {
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Vazirmatn';
-            font-size: 0.9rem;
-            font-weight: bold;
-            width: 100%;
-            margin-bottom: 5px;
+‏        .btn-link { 
+‏            background: var(--primary); color: white; text-decoration: none;
+‏            padding: 12px; border-radius: 12px; font-weight: bold; display: block;
+‏            transition: 0.3s;
         }
 
-        .btn-info { background: #f3f4f6; color: #374151; }
-        .btn-pay { background: var(--primary); color: white; }
+        /* دوگمەی سوور */
+‏        .btn-red { background: var(--danger) !important; }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            justify-content: center; align-items: center; z-index: 1000;
+‏        footer {
+‏            margin-top: 50px; text-align: center; padding: 30px;
+‏            border-top: 1px solid rgba(148, 163, 184, 0.2);
         }
-        .modal-content {
-            background: white; padding: 30px; border-radius: 20px;
-            max-width: 450px; width: 90%; text-align: center;
-        }
-    </style>
-</head>
-<body>
 
-<div class="container">
-    <h1>خزمەتگوزارییەکانمان</h1>
-    <div class="services-grid" id="grid">
-        </div>
-</div>
+‏        .social-links { display: flex; justify-content: center; gap: 30px; margin-top: 15px; }
+‏        .social-icon { font-size: 35px; text-decoration: none; transition: 0.3s; }
+‏        .fa-instagram { color: var(--insta); }
+‏        .fa-telegram { color: var(--primary); }
+‏        .social-text { display: block; font-size: 0.8rem; margin-top: 5px; color: var(--text-dim); }
 
-<div id="modal" class="modal">
-    <div id="modal-c" class="modal-content"></div>
-</div>
+‏        @media (max-width: 600px) { .service-card { width: 100%; } }
+‏    </style>
+‏</head>
+‏<body data-theme="dark">
 
-<script>
-    const services = [
-        { id: 1, icon: "🚀", title: "خێراکردن", price: "١٥ هەزار", desc: "خێراکردنی ماڵپەڕ بۆ ئاستێکی پێوانەیی." },
-        { id: 2, icon: "🛡️", title: "پاراستن", price: "٣٠ هەزار", desc: "پاراستنی داتا لە هاک و هێرشی ئەلیکترۆنی." },
-        { id: 3, icon: "🎨", title: "دیزاین", price: "٥٠ هەزار", desc: "دیزاینکردنی ڕووکاری مۆدێرن و سەرنجڕاکێش." },
-        { id: 4, icon: "📈", title: "سەئۆ (SEO)", price: "٤٠ هەزار", desc: "هێنانە پێشەوەی وێبسایت لە گۆگڵ." },
-        { id: 5, icon: "📱", title: "ئەپڵیکەیشن", price: "٩٠ هەزار", desc: "دروستکردنی ئەپی تایبەت بۆ مۆبایل." },
-        { id: 6, icon: "🤖", title: "زیرەکی دەستکرد", price: "٦٥ هەزار", desc: "جێگیرکردنی سیستەمی زیرەک." },
-        { id: 7, icon: "☁️", title: "هۆستینگ", price: "٢٥ هەزار", desc: "دابینکردنی سێرڤەری بەهێز." }
-    ];
+‏<button class="theme-toggle" id="themeBtn">🌙</button>
 
-    const grid = document.getElementById('grid');
-    services.forEach(s => {
-        grid.innerHTML += `
-            <div class="service-card">
-                <div class="icon">${s.icon}</div>
-                <h3>${s.title}</h3>
-                <p>${s.desc}</p>
-                <button class="btn btn-info" onclick="showInfo(${s.id})">زانیاری</button>
-                <button class="btn btn-pay" onclick="showPay('${s.price}')">کڕین</button>
-            </div>
-        `;
+‏<div class="container">
+‏    <h1>باکێجێن Fly Store VIP</h1>
+‏    <div class="services-grid" id="grid">
+‏        <div class="service-card" style="border-color: #f59e0b;">
+‏            <div class="icon">💵</div>
+‏            <h3>باکێجا کلاسیک</h3>
+‏            <p class="short-desc">باکێجا کلاسیک زەمان 1 هەیڤ دگەل دایە و د ماوێ سێ رۆژا دا ئەکتیڤ دبیت ئانکو دڤێت سێ رۆژان چاڤەرێ بی هەتاکوو ئەکتیڤ دبیت پتری ١٠٠٠ بەرنامە تێدایە.</p>
+‏            <div class="status-text">نوکە دا کار لسەر باکێجا کلاسیک دکەن</div>
+‏            <a href="#" class="btn-link btn-red">لدەمەکێ نزیک</a>
+‏        </div>
+
+‏        <div class="service-card">
+‏            <div class="icon">💎</div>
+‏            <h3>ڤی ئای پی</h3>
+‏            <p class="short-desc">باکێجا ڤی ئای پی ئێکسەر ئەکتیڤ دبیت ئانکو ماوێ ئەکتیڤ بوونێ پێنچ چرکەنە پتری ٢٥٠٠ بەرنامان ژ خوو دگریت زەمانا بەرنامەی 3 هەیڤن</p>
+‏            <div class="price">١٠,٠٠٠ <span style="font-size: 0.9rem;">د.ع</span></div>
+‏            <a href="https://t.me/flystorevipapp" target="_blank" class="btn-link">نوکە بەژداریێ تێدا بکە</a>
+‏        </div>
+
+‏        <div class="service-card">
+‏            <div class="icon">👻</div>
+‏            <h3>سناپ باند</h3>
+‏            <p class="short-desc">ئەڤ سناپە بوان کەسانە یێن دڤێن باندا خوو یێ سناپی هەلگرن ئەڤ سناپە هاریکارە و دشێت باندا سناپی 100% راکەت لسەر مۆبایلێ تە بوو زانین ئەڤ سناپە هەیڤانە دڤێت نیکەی.</p>
+‏            <div class="price">٩,٠٠٠ <span style="font-size: 0.9rem;">د.ع</span></div>
+‏            <a href="https://t.me/flystorevipapp" target="_blank" class="btn-link">نوکە بەژداریێ تێدا بکە</a>
+‏        </div>
+‏    </div>
+‏</div>
+
+‏<footer>
+‏    <p>پەیوەندیێ بمە بکەن لسەر رێیا سۆشیاڵ میدیایێ</p>
+‏    <div class="social-links">
+‏        <a href="https://www.instagram.com/flystore.app?igsh=bHJmb3R4eThlNTBo&utm_source=qr" target="_blank" class="social-icon">
+‏            <i class="fab fa-instagram"></i>
+‏            <span class="social-text">Instagram</span>
+‏        </a>
+‏        <a href="https://t.me/flystorevipapp" target="_blank" class="social-icon">
+‏            <i class="fab fa-telegram"></i>
+‏            <span class="social-text">Telegram</span>
+‏        </a>
+‏    </div>
+‏    <p style="font-size: 0.7rem; margin-top: 20px; color: var(--text-dim);">© 2021 Fly Store VIP. All rights reserved.</p>
+‏</footer>
+
+‏<script>
+‏    const themeBtn = document.getElementById('themeBtn');
+‏    let isDark = true;
+‏    themeBtn.addEventListener('click', () => {
+‏        isDark = !isDark;
+‏        document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+‏        themeBtn.innerText = isDark ? '🌙' : '☀️';
     });
+‏</script>
 
-    function showInfo(id) {
-        const s = services.find(x => x.id === id);
-        const modal = document.getElementById('modal');
-        document.getElementById('modal-c').innerHTML = `
-            <h2>${s.icon} ${s.title}</h2>
-            <p>${s.desc} ئێمە باشترین کوالێتی پێشکەش دەکەین.</p>
-            <button class="btn btn-pay" onclick="modal.style.display='none'">داخستن</button>
-        `;
-        modal.style.display = 'flex';
-    }
-
-    function showPay(p) {
-        const modal = document.getElementById('modal');
-        document.getElementById('modal-c').innerHTML = `
-            <h3>پارەدان بە FIB</h3>
-            <p>بڕی پارە: <b>${p}</b></p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FIB" style="margin:15px 0;">
-            <button class="btn btn-info" onclick="modal.style.display='none'">پاشگەزبوونەوە</button>
-        `;
-        modal.style.display = 'flex';
-    }
-</script>
-</body>
-</html>
+‏</body>
+‏</html>
