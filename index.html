@@ -32,6 +32,19 @@
             display: flex; flex-direction: column;
         }
         .service-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        
+        /* ستایلی تایبەت بۆ ئایکۆنێ ئایپادێ */
+        .ipad-icon {
+            width: 50px; height: 65px; border: 3px solid var(--primary);
+            border-radius: 6px; margin: 0 auto 15px; position: relative;
+            background: rgba(0, 136, 204, 0.1);
+        }
+        .ipad-icon::after {
+            content: ''; position: absolute; bottom: 4px; left: 50%;
+            transform: translateX(-50%); width: 6px; height: 6px;
+            border: 1.5px solid var(--primary); border-radius: 50%;
+        }
+
         .icon { font-size: 50px; margin-bottom: 15px; color: var(--primary); }
         h3 { color: var(--primary); margin: 10px 0; }
         .desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; flex-grow: 1; margin-bottom: 15px; text-align: justify; }
@@ -65,10 +78,7 @@
         </div>
 
         <div class="service-card" style="border-top: 4px solid #10b981;">
-            <div class="icon">
-                <i class="fas fa-tablet-screen-button" style="font-size: 55px;"></i>
-            </div>
-            <h3>باکێجا ئایپاد</h3>
+            <div class="ipad-icon"></div> <h3>باکێجا ئایپاد</h3>
             <p class="desc">باکێجا ئایپاد بەردەستە ب ئەرزانترین بها و باکێجا ڤی ئای پی ئێکسەر ئەکتیڤ دبیت بێ چاڤەرێ بوون.</p>
             <div class="price">٣,٠٠٠ <span style="font-size: 0.8rem;">د.ع</span></div>
             <a href="https://t.me/flystorevipapp" target="_blank" class="btn btn-blue">نوکە بەژداریێ تێدا بکە</a>
