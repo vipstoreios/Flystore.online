@@ -3,57 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly Market | چوونەژوورەوەی بریکاران</title>
+    <title>Fly Market | Login</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            background: #0b0f19;
-            display: flex; justify-content: center; align-items: center; height: 100vh;
-            margin: 0; color: white; font-family: sans-serif;
-        }
-        .login-card {
-            background: #161d2f; padding: 40px; border-radius: 20px;
-            width: 100%; max-width: 400px; text-align: center;
-            border: 1px solid #1e3a8a; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .logo { font-size: 2rem; font-weight: bold; color: #38bdf8; margin-bottom: 10px; }
-        input {
-            width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px;
-            border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box;
-        }
-        .btn-login {
-            width: 100%; padding: 12px; background: #38bdf8; color: #000;
-            border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px;
-        }
-        .note { color: #94a3b8; font-size: 0.8rem; margin-top: 20px; }
-    </style>
 </head>
-<body>
+<body class="login-body">
+    <div class="login-card">
+        <div class="logo">FLY MARKET</div>
+        <p style="color: #94a3b8; margin-bottom: 20px;">تایبەت بە بریکاران</p>
+        <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
+        <input type="password" id="password" placeholder="وشەی نهێنی">
+        <button class="btn-login" onclick="attemptLogin()">چوونەژوورەوە</button>
+        <div id="loginError" style="color: #ef4444; margin-top: 10px; display: none;">زانیارییەکان هەڵەیە!</div>
+    </div>
 
-<div class="login-card">
-    <div class="logo">FLY MARKET</div>
-    <p>تایبەت بە بریکاران و دوکاندارەکان</p>
-    
-    <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
-    <input type="password" id="password" placeholder="وشەی نهێنی">
-    <button class="btn-login" onclick="login()">چوونەژوورەوە</button>
-    
-    <p class="note">ئەگەر ئەکاونتت نییە، پەیوەندی بە بەڕێوەبەر بکە بۆ دروستکردن.</p>
-</div>
+    <script>
+        function attemptLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
 
-<script>
-    function login() {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
-
-        // ئەمە تەنها بۆ تێستە، دواتر دەکرێت بە داتابەیس
-        if(user === "shop1" && pass === "1234") {
-            window.location.href = "shop_dashboard.html";
-        } else {
-            alert("زانیارییەکان هەڵەیە!");
+            // لێرەدا دەبێت لەگەڵ فایەربەیس بەراورد بکرێت، بۆ ئێستا ئەمە جدییە:
+            if(user && pass) {
+                localStorage.setItem("currentUser", user);
+                window.location.href = "shop_dashboard.html";
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>
