@@ -3,111 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>داشبۆردی بریکاران | FLY MARKET</title>
+    <title>Dashboard | Fly Market</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header class="header-bar">
+        <div class="logo-small">FLY MARKET</div>
+        <div class="balance-box" id="displayBalance">باڵانس: 0 دینار</div>
+    </header>
 
-<header class="header-bar">
-    <div class="logo-small">FLY MARKET</div>
-    <div class="balance-box" id="userBalance">باڵانس: 50,000 دینار</div>
-</header>
+    <div class="grid-container">
+        <div class="product-card">
+            <span class="badge">٢ مانگ گەرەنتی</span>
+            <h3>کۆدی فڵای ستۆر (یەکسەر)</h3>
+            <div class="price">9,750 IQD</div>
+            <button class="btn-buy" onclick="processPurchase('FlyStore_Instant', 9750)">کڕین و وەرگرتنی کۆد</button>
+        </div>
 
-<section class="welcome-header">
-    <h2>بەخێربێیتەوە، بریکار 👋</h2>
-    <p>کۆدەکانی فڵای ستۆر بە نرخی جوملە</p>
-</section>
-
-<div class="grid-container">
-    <div class="product-card">
-        <span class="badge">٢ مانگ گەرەنتی</span>
-        <h3>کۆدی فڵای ستۆر (یەکسەر)</h3>
-        <p>چالاکبوونی دەستبەجێ</p>
-        <div class="price">9,750 IQD</div>
-        <button class="btn-buy" onclick="handleBuy('فڵای ستۆر یەکسەر', 9750)">کڕینی خێرا</button>
+        <div class="product-card">
+            <span class="badge yellow">١ مانگ گەرەنتی</span>
+            <h3>کۆدی فڵای ستۆر (٣ ڕۆژ)</h3>
+            <div class="price">7,500 IQD</div>
+            <button class="btn-buy" onclick="processPurchase('FlyStore_3Day', 7500)">کڕین و وەرگرتنی کۆد</button>
+        </div>
     </div>
 
-    <div class="product-card">
-        <span class="badge yellow">١ مانگ گەرەنتی</span>
-        <h3>کۆدی فڵای ستۆر (٣ ڕۆژ)</h3>
-        <p>ئەکتیڤ بوون دوای ٣ ڕۆژ</p>
-        <div class="price">7,000 IQD</div>
-        <button class="btn-buy" onclick="handleBuy('فڵای ستۆر ٣ ڕۆژ', 7000)">کڕینی خێرا</button>
-    </div>
-</div>
-
-<section class="orders-section">
-    <h3>📦 مێژووی کڕینەکان و کۆدەکان</h3>
-    <div style="overflow-x: auto;">
+    <section class="orders-section">
+        <h3>📦 مێژووی کڕینەکانت</h3>
         <table>
             <thead>
                 <tr>
                     <th>بەرهەم</th>
-                    <th>بەروار</th>
-                    <th>کۆدی کڕدراو</th>
+                    <th>کۆد</th>
                     <th>نرخ</th>
                 </tr>
             </thead>
-            <tbody id="orderList">
-                </tbody>
+            <tbody id="orderHistory"></tbody>
         </table>
-    </div>
-</section>
+    </section>
 
-<a href="https://t.me/your_admin_username" target="_blank" class="tg-btn">
-    پەیوەندی بە ئەدمین
-</a>
+    <script>
+        let balance = parseInt(localStorage.getItem("balance")) || 100000; // ئەمە لە فایەربەیسەوە دێت
+        document.getElementById('displayBalance').innerText = `باڵانس: ${balance.toLocaleString()} دینار`;
 
-<script>
-    let currentBalance = 50000;
-    const mockCodes = ["FLY-9928-XKQW", "FLY-1102-AMZP", "FLY-8837-LPOW", "FLY-5562-QRZT"];
+        function processPurchase(prodName, price) {
+            if (balance < price) {
+                alert("باڵانست تەواو نییە!");
+                return;
+            }
 
-    function handleBuy(name, price) {
-        if (currentBalance < price) {
-            alert("باڵانسی پێویستت نییە! پەیوەندی بە ئەدمین بکە.");
-            return;
+            if (confirm(`ئایا دڵنیایت لە کڕینی ${prodName}؟`)) {
+                balance -= price;
+                localStorage.setItem("balance", balance);
+                document.getElementById('displayBalance').innerText = `باڵانس: ${balance.toLocaleString()} دینار`;
+                
+                const generatedCode = "FL-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+                addOrderToTable(prodName, generatedCode, price);
+                alert("کۆدەکەت: " + generatedCode);
+            }
         }
 
-        if(confirm(`ئایا دڵنیایت لە کڕینی ${name}؟`)) {
-            currentBalance -= price;
-            document.getElementById('userBalance').innerText = `باڵانس: ${currentBalance.toLocaleString()} دینار`;
-
-            const code = mockCodes[Math.floor(Math.random() * mockCodes.length)];
-            
-            // نیشاندانی کۆدەکە
-            showPopup(name, code);
-
-            // زیادکردن بۆ خشتە
-            const table = document.getElementById('orderList');
-            const row = `<tr>
-                <td>${name}</td>
-                <td>ئێستا</td>
-                <td class="code-text">${code}</td>
-                <td>${price.toLocaleString()} دینار</td>
-            </tr>`;
-            table.innerHTML = row + table.innerHTML;
+        function addOrderToTable(name, code, price) {
+            const row = `<tr><td>${name}</td><td class="code-text">${code}</td><td>${price} IQD</td></tr>`;
+            document.getElementById('orderHistory').innerHTML = row + document.getElementById('orderHistory').innerHTML;
         }
-    }
-
-    function showPopup(name, code) {
-        const div = document.createElement('div');
-        div.className = "popup-overlay";
-        div.innerHTML = `
-            <div class="popup-content">
-                <h3>پیرۆزە! کڕین سەرکەوتوو بوو</h3>
-                <p>${name}</p>
-                <div class="code-display">${code}</div>
-                <button onclick="copyCode('${code}')" class="btn-copy">کۆپی کردنی کۆد</button>
-                <button onclick="this.parentElement.parentElement.remove()" class="btn-close">داخستن</button>
-            </div>
-        `;
-        document.body.appendChild(div);
-    }
-
-    function copyCode(c) {
-        navigator.clipboard.writeText(c);
-        alert("کۆدەکە کۆپی کرا!");
-    }
-</script>
+    </script>
 </body>
 </html>
