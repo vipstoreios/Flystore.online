@@ -2,70 +2,46 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Fly Market</title>
+    <title>داشبۆردی کڕین</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <header class="header-bar">
-        <div class="logo-small">FLY MARKET</div>
-        <div class="balance-box" id="displayBalance">باڵانس: 0 دینار</div>
-    </header>
+<body style="background:#0b0f19; color:white; font-family:sans-serif;">
+    <div style="background:#161d2f; padding:15px; display:flex; justify-content:space-between; border-bottom:2px solid #38bdf8;">
+        <div id="welcomeMsg">بەخێربێیت</div>
+        <div id="userBalance" style="background:#38bdf8; color:black; padding:5px 15px; border-radius:10px; font-weight:bold;">باڵانس: 0 دینار</div>
+    </div>
 
-    <div class="grid-container">
-        <div class="product-card">
-            <span class="badge">٢ مانگ گەرەنتی</span>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px; padding:20px;">
+        <div style="background:#161d2f; padding:20px; border-radius:15px; text-align:center; border:1px solid #334155;">
             <h3>کۆدی فڵای ستۆر (یەکسەر)</h3>
-            <div class="price">9,750 IQD</div>
-            <button class="btn-buy" onclick="processPurchase('FlyStore_Instant', 9750)">کڕین و وەرگرتنی کۆد</button>
-        </div>
-
-        <div class="product-card">
-            <span class="badge yellow">١ مانگ گەرەنتی</span>
-            <h3>کۆدی فڵای ستۆر (٣ ڕۆژ)</h3>
-            <div class="price">7,500 IQD</div>
-            <button class="btn-buy" onclick="processPurchase('FlyStore_3Day', 7500)">کڕین و وەرگرتنی کۆد</button>
+            <div style="color:#38bdf8; font-size:1.5rem; font-weight:bold; margin:10px 0;">9,750 IQD</div>
+            <button onclick="buyCode('Fly_Instant', 9750)" style="width:100%; padding:10px; background:#38bdf8; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">کڕین</button>
         </div>
     </div>
 
-    <section class="orders-section">
-        <h3>📦 مێژووی کڕینەکانت</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>بەرهەم</th>
-                    <th>کۆد</th>
-                    <th>نرخ</th>
-                </tr>
-            </thead>
-            <tbody id="orderHistory"></tbody>
-        </table>
-    </section>
-
     <script>
-        let balance = parseInt(localStorage.getItem("balance")) || 100000; // ئەمە لە فایەربەیسەوە دێت
-        document.getElementById('displayBalance').innerText = `باڵانس: ${balance.toLocaleString()} دینار`;
+        // وەرگرتنی ناوی ئەو یوزەرەی کە داخل بووە
+        const currentUser = localStorage.getItem("currentUser") || "shop1";
+        let balance = parseInt(localStorage.getItem("db_user_" + currentUser)) || 0;
 
-        function processPurchase(prodName, price) {
+        document.getElementById('welcomeMsg').innerText = "بەخێربێیت: " + currentUser;
+        document.getElementById('userBalance').innerText = "باڵانس: " + balance.toLocaleString() + " دینار";
+
+        function buyCode(name, price) {
             if (balance < price) {
-                alert("باڵانست تەواو نییە!");
+                alert("باڵانست تەواو نییە! پەیوەندی بە ئەدمین بکە.");
                 return;
             }
 
-            if (confirm(`ئایا دڵنیایت لە کڕینی ${prodName}؟`)) {
+            if(confirm("ئایا دڵنیایت لە کڕین؟")) {
                 balance -= price;
-                localStorage.setItem("balance", balance);
-                document.getElementById('displayBalance').innerText = `باڵانس: ${balance.toLocaleString()} دینار`;
+                // نوێکردنەوەی باڵانس لە میمۆری وێبگەڕ
+                localStorage.setItem("db_user_" + currentUser, balance);
+                document.getElementById('userBalance').innerText = "باڵانس: " + balance.toLocaleString() + " دینار";
                 
-                const generatedCode = "FL-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-                addOrderToTable(prodName, generatedCode, price);
-                alert("کۆدەکەت: " + generatedCode);
+                let code = "FL-" + Math.floor(1000 + Math.random() * 9000) + "-FREE";
+                alert("کڕین سەرکەوتوو بوو!\nکۆدی تۆ: " + code);
             }
-        }
-
-        function addOrderToTable(name, code, price) {
-            const row = `<tr><td>${name}</td><td class="code-text">${code}</td><td>${price} IQD</td></tr>`;
-            document.getElementById('orderHistory').innerHTML = row + document.getElementById('orderHistory').innerHTML;
         }
     </script>
 </body>
