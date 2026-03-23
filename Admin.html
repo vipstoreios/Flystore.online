@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چوونەژوورەوە | FLY MARKET</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            background: radial-gradient(circle, #1e3a8a 0%, #0b0f19 100%);
+        }
+        .login-box {
+            background: var(--card-bg); padding: 40px; border-radius: 20px;
+            border: 1px solid var(--main-blue); box-shadow: 0 0 30px rgba(0, 123, 255, 0.2);
+            width: 350px; text-align: center;
+        }
+        input {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px;
+            border: 1px solid #334155; background: #0f172a; color: white; outline: none;
+        }
+        .btn-login {
+            width: 100%; padding: 12px; background: var(--main-blue);
+            color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h2 style="color: var(--main-blue);">بەخێربێیتەوە</h2>
+    <p style="color: #94a3b8; font-size: 0.9rem;">تکایە وشەی نهێنی بنووسە بۆ چوونە ناو پانێڵ</p>
+    
+    <input type="password" id="adminPass" placeholder="وشەی نهێنی (Password)">
+    <button class="btn-login" onclick="checkLogin()">چوونەژوورەوە</button>
+    <p id="errorMsg" style="color: #ef4444; font-size: 0.8rem; margin-top: 10px; display: none;">وشەی نهێنی هەڵەیە!</p>
+</div>
+
+<script>
+    function checkLogin() {
+        const pass = document.getElementById('adminPass').value;
+        // لێرەدا دەتوانیت وشەی نهێنییەکە بگۆڕیت (بۆ نموونە دامناوە fly123)
+        if (pass === "fly123") {
+            window.location.href = "dashboard.html"; // ئەگەر ڕاست بوو دەچێتە داشبۆرد
+        } else {
+            document.getElementById('errorMsg').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
