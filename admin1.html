@@ -3,173 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly Admin | Full V6</title>
+    <title>Fly Admin | Control</title>
     <style>
         :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --danger: #ef4444; --success: #22c55e; --text: #f8fafc; --border: #1f2937; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; }
-        #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; }
-        .lock-box { background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); text-align: center; width: 90%; max-width: 320px; }
-        #admin-content { display: none; }
+        #lock { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; }
         .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        .stat-box h3 { margin: 5px 0; color: var(--accent); font-size: 18px; }
-        input, select, textarea { background: #050810; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; outline: none; }
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 16px; transition: 0.3s; }
-        .btn-add { background: var(--success); color: white; }
-        .btn-primary { background: var(--accent); color: black; }
-        .btn-del { background: var(--danger); color: white; padding: 5px; font-size: 11px; width: auto; border-radius: 5px; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .s-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        input, select, textarea { background: #050810; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; outline:none; text-align: center; }
+        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; margin-bottom: 10px; }
+        .btn-p { background: var(--accent); color: black; }
+        .btn-s { background: var(--success); color: white; }
         .scroll { max-height: 200px; overflow-y: auto; background: #050810; padding: 10px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="lock-screen">
-        <div class="lock-box">
-            <h2 style="color:var(--accent)">ADMIN LOGIN</h2>
-            <input type="password" id="admin_pass_input" placeholder="پاسۆرد بنووسە">
-            <button class="btn btn-primary" onclick="checkAdminPass()">چوونەژوورەوە</button>
-        </div>
+<div id="lock">
+    <div class="card" style="width:300px; text-align:center;">
+        <h3 style="color:var(--accent)">ADMIN LOGIN</h3>
+        <input type="password" id="ap" placeholder="Password">
+        <button class="btn btn-p" onclick="check()">چوونەژوورەوە</button>
+    </div>
+</div>
+
+<div id="cont" style="display:none;">
+    <h2 style="text-align:center; color:var(--accent)">FLY ADMIN V6</h2>
+    
+    <div class="card">
+        <h3>📢 نامەی گشتی (Broadcast)</h3>
+        <input type="text" id="bm" placeholder="نامەکە بنووسە...">
+        <button class="btn btn-p" onclick="sendB()">بڵاوکردنەوە</button>
     </div>
 
-    <div id="admin-content">
-        <h2 style="text-align:center; color:var(--accent)">FLY ADMIN V6</h2>
-        
-        <div class="card" style="border-color: var(--accent);">
-            <h3 style="margin-top:0;">📢 ناردنی ئاگاداری بۆ بریکارەکان</h3>
-            <input type="text" id="broadcast_msg" placeholder="نامەکە لێرە بنووسە...">
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-primary" onclick="sendBroadcast()">بڵاوکردنەوە</button>
-                <button class="btn" style="background:#374151; color:white;" onclick="clearBroadcast()">سڕینەوەی نامە</button>
-            </div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-box"><p style="font-size:12px">وەرگیراو (فرۆش)</p><h3 id="earned">0</h3></div>
-            <div class="stat-box"><p style="font-size:12px">ماوە لای بریکار</p><h3 id="debt">0</h3></div>
-            <div class="stat-box"><p style="font-size:12px">کۆدی ماوە</p><h3 id="stock">0</h3></div>
-            <div class="stat-box"><p style="font-size:12px">کۆی فرۆشراو</p><h3 id="sold">0</h3></div>
-        </div>
-
-        <div class="card">
-            <h3>💳 زیادکردنی باڵانس</h3>
-            <select id="bal_user_select"></select>
-            <input type="number" id="bal_amount" placeholder="بڕی پارە">
-            <button class="btn btn-primary" onclick="addBalance()">Update Balance</button>
-        </div>
-
-        <div class="card">
-            <h3>👤 بریکارەکان</h3>
-            <input type="text" id="u_name" placeholder="Username" autocapitalize="none">
-            <input type="text" id="u_pass" placeholder="Password">
-            <button class="btn btn-add" onclick="addUser()">تۆمارکردنی یوزەر</button>
-            <div id="userList" class="scroll"></div>
-        </div>
-
-        <div class="card">
-            <h3>🛍️ بەرهەم و کۆدەکان</h3>
-            <input type="text" id="p_name" placeholder="ناوی بەرهەم">
-            <input type="number" id="p_price" placeholder="نرخ">
-            <button class="btn btn-add" style="background:var(--accent); color:black;" onclick="addProduct()">زیادکردنی بەرهەم</button>
-            <select id="p_select" onchange="loadStock()"></select>
-            <textarea id="bulk_codes" placeholder="کۆدەکان..."></textarea>
-            <button class="btn btn-add" onclick="addCodes()">بارکردنی کۆدەکان</button>
-            <div id="stockList" class="scroll"></div>
-        </div>
+    <div class="stats">
+        <div class="s-box"><p style="font-size:10px">وەرگیراو</p><h3 id="e">0</h3></div>
+        <div class="s-box"><p style="font-size:10px">قەرز لای بریکار</p><h3 id="d">0</h3></div>
+        <div class="s-box"><p style="font-size:10px">کۆدی ماوە</p><h3 id="s">0</h3></div>
+        <div class="s-box"><p style="font-size:10px">کۆی فرۆشراو</p><h3 id="sl">0</h3></div>
     </div>
+
+    <div class="card">
+        <h3>💳 باڵانس و بریکار</h3>
+        <select id="bu"></select>
+        <input type="number" id="ba" placeholder="بڕی پارە (IQD)">
+        <button class="btn btn-p" onclick="addB()">+ زیادکردنی باڵانس</button>
+        <hr style="border:0.5px solid #1f2937; margin:20px 0;">
+        <input type="text" id="un" placeholder="Username (بچووک)" autocapitalize="none">
+        <input type="text" id="up" placeholder="Password">
+        <button class="btn btn-s" onclick="addU()">تۆمارکردنی یوزەر</button>
+        <div id="ul" class="scroll"></div>
+    </div>
+
+    <div class="card">
+        <h3>🛍️ بەرهەم و کۆگا</h3>
+        <input type="text" id="pn" placeholder="ناوی بەرهەم">
+        <input type="number" id="pp" placeholder="نرخ">
+        <button class="btn btn-s" onclick="addP()">دروستکردنی بەرهەم</button>
+        <select id="ps" onchange="loadS()"></select>
+        <textarea id="bc" placeholder="کۆدەکان (هەر دێڕێک و کۆدێک)"></textarea>
+        <button class="btn btn-p" onclick="addC()">بارکردنی کۆدەکان</button>
+        <div id="slst" class="scroll"></div>
+    </div>
+</div>
 
 <script>
-    function checkAdminPass() {
-        if (document.getElementById('admin_pass_input').value === "Ostaz.kim88") {
-            document.getElementById('lock-screen').style.display = 'none';
-            document.getElementById('admin-content').style.display = 'block';
-            refresh();
-        } else { alert("هەڵەیە!"); }
+    function check() { 
+        if(document.getElementById('ap').value === "Ostaz.kim88"){ 
+            document.getElementById('lock').style.display='none'; 
+            document.getElementById('cont').style.display='block'; 
+            refresh(); 
+        } else { alert("پاسۆردی ئەدمین هەڵەیە!"); }
     }
 
-    // فەنکشنی ناردنی نامە
-    function sendBroadcast() {
-        let msg = document.getElementById('broadcast_msg').value;
-        if(msg) {
-            localStorage.setItem('fly_alert', msg);
-            alert("نامەکە بڵاوکرایەوە!");
-        }
-    }
-    function clearBroadcast() {
-        localStorage.removeItem('fly_alert');
-        document.getElementById('broadcast_msg').value = "";
-        alert("نامەکە سڕایەوە");
+    function sendB() { 
+        localStorage.setItem('fly_alert', document.getElementById('bm').value); 
+        alert("نامەکە بڵاوکرایەوە بۆ هەموو بریکارەکان"); 
     }
 
-    function refresh() { renderUsers(); renderProducts(); updateStats(); }
-    function updateStats() {
+    function refresh() { renderU(); renderP(); updateS(); }
+
+    function updateS() {
         let logs = JSON.parse(localStorage.getItem('logs') || "[]");
         let prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        let earned = 0; logs.forEach(l => { earned += (l.price || 0); });
-        document.getElementById('earned').innerText = earned.toLocaleString();
-        document.getElementById('sold').innerText = logs.length;
-        let totalStock = 0; prods.forEach(p => { totalStock += JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]").length; });
-        document.getElementById('stock').innerText = totalStock;
-        let debt = 0; for (let i=0; i<localStorage.length; i++) {
+        let earned = 0; logs.forEach(l => earned += (l.price || 0));
+        document.getElementById('e').innerText = earned.toLocaleString();
+        document.getElementById('sl').innerText = logs.length;
+        let totalS = 0; prods.forEach(p => totalS += JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]").length);
+        document.getElementById('s').innerText = totalS;
+        let debt = 0; 
+        for(let i=0; i<localStorage.length; i++) {
             let k = localStorage.key(i); if(k.startsWith('acc_')) debt += JSON.parse(localStorage.getItem(k)).bal;
         }
-        document.getElementById('debt').innerText = debt.toLocaleString();
+        document.getElementById('d').innerText = debt.toLocaleString();
     }
-    function addBalance() {
-        let u = document.getElementById('bal_user_select').value;
-        let amt = parseInt(document.getElementById('bal_amount').value);
-        if(!u || !amt) return;
+
+    function addB() {
+        let u = document.getElementById('bu').value;
+        let a = parseInt(document.getElementById('ba').value);
+        if(!u || isNaN(a)) return alert("بڕی پارە بنووسە");
         let d = JSON.parse(localStorage.getItem(`acc_${u}`));
-        d.bal += amt; localStorage.setItem(`acc_${u}`, JSON.stringify(d));
-        refresh(); alert("تەواو بوو");
+        d.bal += a; 
+        localStorage.setItem(`acc_${u}`, JSON.stringify(d));
+        refresh(); alert("باڵانس زیادکرا بۆ " + u);
     }
-    function addUser() {
-        let u = document.getElementById('u_name').value.trim().toLowerCase();
-        let p = document.getElementById('u_pass').value.trim();
-        if(!u || !p) return;
+
+    function addU() {
+        let u = document.getElementById('un').value.trim().toLowerCase();
+        let p = document.getElementById('up').value.trim();
+        if(!u || !p) return alert("ناو و پاسۆرد بنووسە");
         localStorage.setItem(`acc_${u}`, JSON.stringify({pass:p, bal:0}));
+        document.getElementById('un').value = ""; document.getElementById('up').value = "";
         refresh();
     }
-    function renderUsers() {
-        const div = document.getElementById('userList');
-        const select = document.getElementById('bal_user_select');
-        div.innerHTML = ""; select.innerHTML = "";
-        for (let i=0; i<localStorage.length; i++) {
+
+    function renderU() {
+        const div = document.getElementById('ul'); const sel = document.getElementById('bu');
+        div.innerHTML = ""; sel.innerHTML = "";
+        for(let i=0; i<localStorage.length; i++) {
             let k = localStorage.key(i); if(k.startsWith('acc_')) {
-                let name = k.replace('acc_',''); let d = JSON.parse(localStorage.getItem(k));
-                div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #1f2937;"><span>${name} (${d.bal.toLocaleString()})</span><button class="btn-del" onclick="localStorage.removeItem('${k}'); refresh();">X</button></div>`;
-                select.innerHTML += `<option value="${name}">${name}</option>`;
+                let n = k.replace('acc_',''); let d = JSON.parse(localStorage.getItem(k));
+                div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #1f2937;">
+                <span>${n} (<b style="color:var(--accent)">${d.bal.toLocaleString()}</b>)</span>
+                <button onclick="if(confirm('سڕینەوە؟')){localStorage.removeItem('${k}');refresh()}" style="background:var(--danger); color:white; border:none; border-radius:5px; padding:2px 8px;">X</button></div>`;
+                sel.innerHTML += `<option value="${n}">${n}</option>`;
             }
         }
     }
-    function addProduct() {
-        let n = document.getElementById('p_name').value;
-        let p = document.getElementById('p_price').value;
-        if(!n || !p) return;
+
+    function addP() {
+        let n = document.getElementById('pn').value; let p = document.getElementById('pp').value;
+        if(!n || !p) return alert("ناوی بەرهەم و نرخ بنووسە");
         let prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        let id = "ID"+Date.now();
-        prods.push({id, n, p:parseInt(p)});
-        localStorage.setItem('prods', JSON.stringify(prods));
-        localStorage.setItem(`stk_${id}`, "[]");
+        let id = "ID"+Date.now(); prods.push({id, n, p:parseInt(p)});
+        localStorage.setItem('prods', JSON.stringify(prods)); localStorage.setItem(`stk_${id}`, "[]");
+        document.getElementById('pn').value = ""; document.getElementById('pp').value = "";
         refresh();
     }
-    function renderProducts() {
+
+    function renderP() {
         const prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        document.getElementById('p_select').innerHTML = prods.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
+        document.getElementById('ps').innerHTML = prods.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
     }
-    function addCodes() {
-        const id = document.getElementById('p_select').value;
-        const raw = document.getElementById('bulk_codes').value;
-        if(!id || !raw.trim()) return;
+
+    function addC() {
+        const id = document.getElementById('ps').value; const raw = document.getElementById('bc').value;
+        if(!id || !raw.trim()) return alert("کۆدەکان بنووسە");
         let newC = raw.split('\n').map(x => x.trim()).filter(x => x.length > 0);
         let old = JSON.parse(localStorage.getItem(`stk_${id}`) || "[]");
         localStorage.setItem(`stk_${id}`, JSON.stringify([...old, ...newC]));
-        document.getElementById('bulk_codes').value = ""; refresh(); loadStock();
+        document.getElementById('bc').value = ""; refresh(); loadS();
+        alert(newC.length + " کۆد زیادکرا");
     }
-    function loadStock() {
-        const id = document.getElementById('p_select').value;
+
+    function loadS() {
+        const id = document.getElementById('ps').value;
+        if(!id) return;
         let stk = JSON.parse(localStorage.getItem(`stk_${id}`) || "[]");
-        document.getElementById('stockList').innerHTML = stk.map(c => `<div style="font-size:12px; padding:5px; border-bottom:1px solid #1f2937;">${c}</div>`).join('');
+        document.getElementById('slst').innerHTML = stk.map(c => `<div style="font-size:12px; padding:5px; border-bottom:1px solid #1f2937;">${c}</div>`).join('');
     }
 </script>
 </body>
