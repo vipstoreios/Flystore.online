@@ -3,165 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly Admin | Control</title>
+    <title>Fly Admin | Online Control</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --danger: #ef4444; --success: #22c55e; --text: #f8fafc; --border: #1f2937; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; }
-        #lock { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; }
-        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .s-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        input, select, textarea { background: #050810; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; outline:none; text-align: center; }
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; margin-bottom: 10px; }
+        :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --border: #1f2937; --text: #f8fafc; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; padding: 15px; margin:0; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
+        input, select, textarea { background: #050810; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 10px; outline: none; }
+        .btn { padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 5px; }
         .btn-p { background: var(--accent); color: black; }
-        .btn-s { background: var(--success); color: white; }
-        .scroll { max-height: 200px; overflow-y: auto; background: #050810; padding: 10px; border-radius: 10px; }
+        #lock { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; }
     </style>
 </head>
 <body>
-
-<div id="lock">
-    <div class="card" style="width:300px; text-align:center;">
-        <h3 style="color:var(--accent)">ADMIN LOGIN</h3>
-        <input type="password" id="ap" placeholder="Password">
-        <button class="btn btn-p" onclick="check()">چوونەژوورەوە</button>
-    </div>
-</div>
+<div id="lock"><div class="card"><h3>تێپەڕەوشەی ئەدمین</h3><input type="password" id="ap"><button class="btn btn-p" onclick="check()">چوونەژوورەوە</button></div></div>
 
 <div id="cont" style="display:none;">
-    <h2 style="text-align:center; color:var(--accent)">FLY ADMIN V6</h2>
+    <h2 style="text-align:center; color:var(--accent)">FLY ONLINE ADMIN</h2>
+    <div class="card"><h3>📢 بڵاوکراوەی گشتی</h3><input type="text" id="bm" placeholder="چی بنوسرێت؟"><button class="btn btn-p" onclick="db.ref('fly_alert').set(document.getElementById('bm').value)">ناردن</button></div>
     
-    <div class="card">
-        <h3>📢 نامەی گشتی (Broadcast)</h3>
-        <input type="text" id="bm" placeholder="نامەکە بنووسە...">
-        <button class="btn btn-p" onclick="sendB()">بڵاوکردنەوە</button>
-    </div>
-
-    <div class="stats">
-        <div class="s-box"><p style="font-size:10px">وەرگیراو</p><h3 id="e">0</h3></div>
-        <div class="s-box"><p style="font-size:10px">قەرز لای بریکار</p><h3 id="d">0</h3></div>
-        <div class="s-box"><p style="font-size:10px">کۆدی ماوە</p><h3 id="s">0</h3></div>
-        <div class="s-box"><p style="font-size:10px">کۆی فرۆشراو</p><h3 id="sl">0</h3></div>
-    </div>
-
-    <div class="card">
-        <h3>💳 باڵانس و بریکار</h3>
+    <div class="card"><h3>💳 بەکارهێنەران و باڵانس</h3>
         <select id="bu"></select>
-        <input type="number" id="ba" placeholder="بڕی پارە (IQD)">
-        <button class="btn btn-p" onclick="addB()">+ زیادکردنی باڵانس</button>
-        <hr style="border:0.5px solid #1f2937; margin:20px 0;">
-        <input type="text" id="un" placeholder="Username (بچووک)" autocapitalize="none">
-        <input type="text" id="up" placeholder="Password">
-        <button class="btn btn-s" onclick="addU()">تۆمارکردنی یوزەر</button>
-        <div id="ul" class="scroll"></div>
+        <input type="number" id="ba" placeholder="بڕی پارە (بۆ نموونە: 5000 یان -2000)"><button class="btn btn-p" onclick="addB()">نوێکردنەوەی باڵانس</button>
+        <hr style="border-color:var(--border)">
+        <input type="text" id="un" placeholder="ناوی نوێ"><input type="text" id="up" placeholder="پاسۆرد"><button class="btn btn-p" onclick="addU()">دروستکردنی یوزەر</button>
     </div>
 
-    <div class="card">
-        <h3>🛍️ بەرهەم و کۆگا</h3>
-        <input type="text" id="pn" placeholder="ناوی بەرهەم">
-        <input type="number" id="pp" placeholder="نرخ">
-        <button class="btn btn-s" onclick="addP()">دروستکردنی بەرهەم</button>
-        <select id="ps" onchange="loadS()"></select>
-        <textarea id="bc" placeholder="کۆدەکان (هەر دێڕێک و کۆدێک)"></textarea>
-        <button class="btn btn-p" onclick="addC()">بارکردنی کۆدەکان</button>
-        <div id="slst" class="scroll"></div>
+    <div class="card"><h3>🛍️ بەرهەمەکان</h3>
+        <input type="text" id="pn" placeholder="ناوی بەرهەم"><input type="number" id="pp" placeholder="نرخ بە دینار"><button class="btn btn-p" onclick="addP()">زیادکردنی بەرهەم</button>
+        <hr style="border-color:var(--border)">
+        <select id="ps"></select><textarea id="bc" rows="5" placeholder="کۆدەکان لێرە دابنێ (هەر یەکەی لە دێڕێک)"></textarea><button class="btn btn-p" onclick="addC()">زیادکردنی کۆد</button>
     </div>
 </div>
 
 <script>
-    function check() { 
-        if(document.getElementById('ap').value === "Ostaz.kim88"){ 
-            document.getElementById('lock').style.display='none'; 
-            document.getElementById('cont').style.display='block'; 
-            refresh(); 
-        } else { alert("پاسۆردی ئەدمین هەڵەیە!"); }
-    }
+    const firebaseConfig = {
+        apiKey: "AIzaSyBohQKrv5zn4N8-jvMI5lWJsKnbQ1AgBXw",
+        authDomain: "flystoreon-f2abc.firebaseapp.com",
+        projectId: "flystoreon-f2abc",
+        databaseURL: "https://flystoreon-f2abc-default-rtdb.firebaseio.com",
+        storageBucket: "flystoreon-f2abc.firebasestorage.app",
+        messagingSenderId: "249136797109",
+        appId: "1:249136797109:web:860229c474737fd3c5f5fc"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    function sendB() { 
-        localStorage.setItem('fly_alert', document.getElementById('bm').value); 
-        alert("نامەکە بڵاوکرایەوە بۆ هەموو بریکارەکان"); 
-    }
+    function check() { if(document.getElementById('ap').value==="Ostaz.kim88"){ document.getElementById('lock').style.display='none'; document.getElementById('cont').style.display='block'; init(); } }
 
-    function refresh() { renderU(); renderP(); updateS(); }
-
-    function updateS() {
-        let logs = JSON.parse(localStorage.getItem('logs') || "[]");
-        let prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        let earned = 0; logs.forEach(l => earned += (l.price || 0));
-        document.getElementById('e').innerText = earned.toLocaleString();
-        document.getElementById('sl').innerText = logs.length;
-        let totalS = 0; prods.forEach(p => totalS += JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]").length);
-        document.getElementById('s').innerText = totalS;
-        let debt = 0; 
-        for(let i=0; i<localStorage.length; i++) {
-            let k = localStorage.key(i); if(k.startsWith('acc_')) debt += JSON.parse(localStorage.getItem(k)).bal;
-        }
-        document.getElementById('d').innerText = debt.toLocaleString();
-    }
-
-    function addB() {
-        let u = document.getElementById('bu').value;
-        let a = parseInt(document.getElementById('ba').value);
-        if(!u || isNaN(a)) return alert("بڕی پارە بنووسە");
-        let d = JSON.parse(localStorage.getItem(`acc_${u}`));
-        d.bal += a; 
-        localStorage.setItem(`acc_${u}`, JSON.stringify(d));
-        refresh(); alert("باڵانس زیادکرا بۆ " + u);
+    function init() {
+        db.ref('users').on('value', s => {
+            let u = s.val() || {}; let sel = document.getElementById('bu'); sel.innerHTML = "";
+            Object.keys(u).forEach(k => sel.innerHTML += `<option value="${k}">${k} (${u[k].bal} IQD)</option>`);
+        });
+        db.ref('products').on('value', s => {
+            let p = s.val() || {}; let sel = document.getElementById('ps'); sel.innerHTML = "";
+            Object.keys(p).forEach(k => sel.innerHTML += `<option value="${k}">${p[k].n}</option>`);
+        });
     }
 
     function addU() {
         let u = document.getElementById('un').value.trim().toLowerCase();
         let p = document.getElementById('up').value.trim();
-        if(!u || !p) return alert("ناو و پاسۆرد بنووسە");
-        localStorage.setItem(`acc_${u}`, JSON.stringify({pass:p, bal:0}));
-        document.getElementById('un').value = ""; document.getElementById('up').value = "";
-        refresh();
+        if(u && p) { db.ref('users/'+u).set({pass:p, bal:0}); alert("یوزەر دروستکرا"); }
     }
 
-    function renderU() {
-        const div = document.getElementById('ul'); const sel = document.getElementById('bu');
-        div.innerHTML = ""; sel.innerHTML = "";
-        for(let i=0; i<localStorage.length; i++) {
-            let k = localStorage.key(i); if(k.startsWith('acc_')) {
-                let n = k.replace('acc_',''); let d = JSON.parse(localStorage.getItem(k));
-                div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #1f2937;">
-                <span>${n} (<b style="color:var(--accent)">${d.bal.toLocaleString()}</b>)</span>
-                <button onclick="if(confirm('سڕینەوە؟')){localStorage.removeItem('${k}');refresh()}" style="background:var(--danger); color:white; border:none; border-radius:5px; padding:2px 8px;">X</button></div>`;
-                sel.innerHTML += `<option value="${n}">${n}</option>`;
-            }
-        }
+    function addB() {
+        let u = document.getElementById('bu').value;
+        let a = parseInt(document.getElementById('ba').value);
+        if(!u || isNaN(a)) return;
+        db.ref(`users/${u}/bal`).transaction(c => (c || 0) + a);
+        alert("باڵانس گۆڕدرا");
     }
 
     function addP() {
         let n = document.getElementById('pn').value; let p = document.getElementById('pp').value;
-        if(!n || !p) return alert("ناوی بەرهەم و نرخ بنووسە");
-        let prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        let id = "ID"+Date.now(); prods.push({id, n, p:parseInt(p)});
-        localStorage.setItem('prods', JSON.stringify(prods)); localStorage.setItem(`stk_${id}`, "[]");
-        document.getElementById('pn').value = ""; document.getElementById('pp').value = "";
-        refresh();
-    }
-
-    function renderP() {
-        const prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        document.getElementById('ps').innerHTML = prods.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
+        if(n && p) { db.ref('products').push({n, p:parseInt(p)}); alert("بەرهەم زیادکرا"); }
     }
 
     function addC() {
-        const id = document.getElementById('ps').value; const raw = document.getElementById('bc').value;
-        if(!id || !raw.trim()) return alert("کۆدەکان بنووسە");
-        let newC = raw.split('\n').map(x => x.trim()).filter(x => x.length > 0);
-        let old = JSON.parse(localStorage.getItem(`stk_${id}`) || "[]");
-        localStorage.setItem(`stk_${id}`, JSON.stringify([...old, ...newC]));
-        document.getElementById('bc').value = ""; refresh(); loadS();
-        alert(newC.length + " کۆد زیادکرا");
-    }
-
-    function loadS() {
-        const id = document.getElementById('ps').value;
-        if(!id) return;
-        let stk = JSON.parse(localStorage.getItem(`stk_${id}`) || "[]");
-        document.getElementById('slst').innerHTML = stk.map(c => `<div style="font-size:12px; padding:5px; border-bottom:1px solid #1f2937;">${c}</div>`).join('');
+        let id = document.getElementById('ps').value;
+        let codes = document.getElementById('bc').value.split('\n').filter(x => x.trim());
+        if(!id || codes.length === 0) return;
+        codes.forEach(c => db.ref(`products/${id}/stock`).push(c));
+        document.getElementById('bc').value = "";
+        alert("کۆدەکان زیادکران");
     }
 </script>
 </body>
