@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fly Market | Login</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         body { background: #050810; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; margin: 0; }
         .box { background: #111827; padding: 30px; border-radius: 20px; border: 1px solid #1f2937; width: 90%; max-width: 350px; text-align: center; }
@@ -14,41 +16,36 @@
 <body>
 <div class="box">
     <h1 style="color:#0ea5e9">FLY MARKET</h1>
-    <input type="text" id="user" placeholder="ناوی بەکارهێنەر" autocapitalize="none" spellcheck="false">
+    <input type="text" id="user" placeholder="ناوی بەکارهێنەر" autocapitalize="none">
     <input type="password" id="pass" placeholder="وشەی نهێنی">
     <button class="btn" onclick="login()">چوونەژوورەوە</button>
 </div>
+
 <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBohQKrv5zn4N8-jvMI5lWJsKnbQ1AgBXw",
+        authDomain: "flystoreon-f2abc.firebaseapp.com",
+        projectId: "flystoreon-f2abc",
+        databaseURL: "https://flystoreon-f2abc-default-rtdb.firebaseio.com",
+        storageBucket: "flystoreon-f2abc.firebasestorage.app",
+        messagingSenderId: "249136797109",
+        appId: "1:249136797109:web:860229c474737fd3c5f5fc"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     function login() {
-        const uInput = document.getElementById('user').value.trim().toLowerCase();
-        const pInput = document.getElementById('pass').value.trim();
+        let u = document.getElementById('user').value.trim().toLowerCase();
+        let p = document.getElementById('pass').value.trim();
+        if(!u || !p) return alert("تکایە خانەکان پڕ بکەرەوە");
 
-        if(!uInput || !pInput) {
-            alert("تکایە هەموو خانەکان پڕ بکەرەوە");
-            return;
-        }
-
-        // پشکنینی داتاکان لەناو localStorage
-        const storageKey = `acc_${uInput}`;
-        const rawData = localStorage.getItem(storageKey);
-
-        if(rawData) {
-            const userData = JSON.parse(rawData);
-            if(userData.pass === pInput) {
-                localStorage.setItem('session', uInput);
+        db.ref('users/' + u).once('value').then((s) => {
+            let d = s.val();
+            if(d && d.pass === p) {
+                localStorage.setItem('session', u);
                 window.location.href = "shop_dashboard.html";
-            } else {
-                alert("وشەی نهێنی هەڵەیە!");
-            }
-        } else {
-            // ئەگەر یوزەرەکە نەبوو، پشکنین بکە بزانە هیچ یوزەرێک هەیە؟
-            let allKeys = Object.keys(localStorage).filter(k => k.startsWith('acc_'));
-            if(allKeys.length === 0) {
-                alert("هیچ یوزەرێک لە سیستمدا نییە! سەرەتا لە ئەدمین پانێڵ یوزەر دروست بکە.");
-            } else {
-                alert("ئەم یوزەرە (" + uInput + ") بوونی نییە!");
-            }
-        }
+            } else { alert("ئەم یوزەرە بوونی نییە یان وشەی نهێنی هەڵەیە!"); }
+        });
     }
 </script>
 </body>
