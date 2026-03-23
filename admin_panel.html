@@ -2,67 +2,189 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>بەڕێوەبەری فڵای ستۆر</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بەڕێوەبەری سەرەکی | Fly Market Admin</title>
     <style>
-        .admin-box { background: #161d2f; padding: 20px; border-radius: 15px; margin: 20px auto; max-width: 600px; border: 1px solid #38bdf8; }
-        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #334155; background: #0b0f19; color: white; }
-        .btn { background: #38bdf8; color: black; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
-        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
-        th, td { padding: 10px; border-bottom: 1px solid #334155; text-align: center; }
+        :root { --blue: #38bdf8; --bg: #0b1120; --card: #161e31; --red: #ef4444; --green: #10b981; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--blue); padding-bottom: 10px; margin-bottom: 30px; }
+        
+        .section { background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid #1e293b; margin-bottom: 30px; }
+        h2 { color: var(--blue); margin-top: 0; font-size: 1.4rem; border-right: 4px solid var(--blue); padding-right: 10px; }
+        
+        .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        input, select, textarea { background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 8px; font-size: 1rem; }
+        
+        .btn { cursor: pointer; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+        .btn-add { background: var(--green); color: white; width: 100%; }
+        .btn-add:hover { background: #059669; }
+        .btn-edit { background: var(--blue); color: black; font-size: 0.8rem; }
+        .btn-del { background: var(--red); color: white; font-size: 0.8rem; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #1e293b; }
+        th { color: #94a3b8; font-size: 0.9rem; }
+        
+        .status-tag { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .active { background: rgba(16, 185, 129, 0.2); color: var(--green); }
     </style>
 </head>
 <body>
-    <div class="admin-box">
-        <h2>بەڕێوەبردنی بریکارەکان</h2>
-        <input type="text" id="uName" placeholder="ناوی بریکار">
-        <input type="number" id="uBalance" placeholder="باڵانس بە دینار">
-        <button class="btn" onclick="saveUser()">تۆمارکردن و زیادکردن</button>
-        
-        <table id="userList">
+
+<div class="container">
+    <div class="header">
+        <h1>کۆنترۆڵی فڵای ستۆر</h1>
+        <button class="btn" onclick="location.reload()" style="background:#334155; color:white;">Refresh Data</button>
+    </div>
+
+    <div class="section">
+        <h2>زیادکردنی بریکاری نوێ</h2>
+        <div class="form-group">
+            <input type="text" id="userName" placeholder="ناوی بریکار (بە ئینگلیزی)">
+            <input type="number" id="userBal" placeholder="باڵانسی سەرەتایی (دینار)">
+        </div>
+        <button class="btn btn-add" onclick="saveUser()">+ تۆمارکردنی بریکار</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ناوی بریکار</th>
+                    <th>باڵانس (دینار)</th>
+                    <th>کردارەکان</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>کۆگا (زیادکردنی کۆدی نوێ بۆ فرۆشتن)</h2>
+        <div class="form-group">
+            <select id="prodType">
+                <option value="Fly_Instant">فڵای ستۆر (یەکسەر)</option>
+                <option value="Fly_3Day">فڵای ستۆر (٣ ڕۆژ)</option>
+            </select>
+            <textarea id="rawCodes" placeholder="کۆدەکان لێرە دابنێ (هەر کۆدێک و دێڕێک)"></textarea>
+        </div>
+        <button class="btn btn-add" style="background: var(--blue); color: black;" onclick="addCodes()">بارکردنی کۆدەکان بۆ سێرڤەر</button>
+        <p id="stockStatus" style="font-size: 0.9rem; color: #94a3b8; margin-top: 10px;"></p>
+    </div>
+
+    <div class="section">
+        <h2>دوایین چالاکییەکانی فرۆشتن</h2>
+        <table id="salesLog">
             <thead>
                 <tr>
                     <th>بریکار</th>
-                    <th>باڵانس</th>
-                    <th>کردار</th>
+                    <th>بەرهەم</th>
+                    <th>کۆد</th>
+                    <th>بەروار</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
+</div>
 
-    <script>
-        function saveUser() {
-            const name = document.getElementById('uName').value;
-            const balance = document.getElementById('uBalance').value;
-            if(!name || !balance) return alert("خانەکان پڕ بکەرەوە");
+<script>
+    // --- بەشی فەنکشنە جدییەکان ---
 
-            // سەیڤکردن لە ناو میمۆری وێبگەڕ (LocalStorage)
-            localStorage.setItem("db_user_" + name, balance);
-            loadUsers();
-            alert("سەرکەوتوو بوو!");
-        }
+    // ١. بارکردنی داتاکان لە کاتی کردنەوەی لاپەڕە
+    window.onload = function() {
+        renderUsers();
+        renderStock();
+        renderSales();
+    };
 
-        function loadUsers() {
-            const tbody = document.querySelector("#userList tbody");
-            tbody.innerHTML = "";
-            for (let i = 0; i < localStorage.length; i++) {
-                let key = localStorage.key(i);
-                if (key.startsWith("db_user_")) {
-                    let name = key.replace("db_user_", "");
-                    let bal = localStorage.getItem(key);
-                    tbody.innerHTML += `<tr>
-                        <td>${name}</td>
-                        <td>${parseInt(bal).toLocaleString()} د.ع</td>
-                        <td><button onclick="deleteUser('${key}')" style="color:red; background:none; border:none; cursor:pointer;">سڕینەوە</button></td>
+    // ٢. سەیڤکردنی بریکار
+    function saveUser() {
+        const name = document.getElementById('userName').value.trim();
+        const bal = document.getElementById('userBal').value;
+        if(!name || !bal) return alert("تکایە هەموو زانیارییەکان پڕ بکەرەوە");
+
+        localStorage.setItem(`db_user_${name}`, bal);
+        alert(`بریکار ${name} بە سەرکەوتوویی زیادکرا`);
+        document.getElementById('userName').value = "";
+        document.getElementById('userBal').value = "";
+        renderUsers();
+    }
+
+    // ٣. نیشاندانی لیستی بریکارەکان
+    function renderUsers() {
+        const body = document.getElementById('userTableBody');
+        body.innerHTML = "";
+        for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i);
+            if (key.startsWith("db_user_")) {
+                let name = key.replace("db_user_", "");
+                let bal = localStorage.getItem(key);
+                body.innerHTML += `
+                    <tr>
+                        <td><strong>${name}</strong></td>
+                        <td style="color:var(--blue)">${parseInt(bal).toLocaleString()} IQD</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editBal('${name}')">گۆڕینی باڵانس</button>
+                            <button class="btn btn-del" onclick="deleteItem('${key}')">سڕینەوە</button>
+                        </td>
                     </tr>`;
-                }
             }
         }
-        function deleteUser(key) {
-            if(confirm("دڵنیایت؟")) { localStorage.removeItem(key); loadUsers(); }
+    }
+
+    // ٤. گۆڕینی باڵانس (بۆ کاتێک بریکار پارە دەنێرێت)
+    function editBal(name) {
+        const current = localStorage.getItem(`db_user_${name}`);
+        const newBal = prompt(`باڵانسی نوێ بۆ ${name} بنووسە:`, current);
+        if(newBal !== null) {
+            localStorage.setItem(`db_user_${name}`, newBal);
+            renderUsers();
         }
-        loadUsers();
-    </script>
+    }
+
+    // ٥. زیادکردنی کۆد بۆ کۆگا
+    function addCodes() {
+        const type = document.getElementById('prodType').value;
+        const text = document.getElementById('rawCodes').value.trim();
+        if(!text) return alert("تکایە کۆدەکان بنووسە");
+
+        let newCodes = text.split('\n').filter(c => c.trim() !== "");
+        let existingCodes = JSON.parse(localStorage.getItem(`stock_${type}`) || "[]");
+        
+        let updatedStock = [...existingCodes, ...newCodes];
+        localStorage.setItem(`stock_${type}`, JSON.stringify(updatedStock));
+        
+        alert(`${newCodes.length} کۆدی نوێ زیادکرا بۆ ${type}`);
+        document.getElementById('rawCodes').value = "";
+        renderStock();
+    }
+
+    function renderStock() {
+        const instant = JSON.parse(localStorage.getItem('stock_Fly_Instant') || "[]").length;
+        const delayed = JSON.parse(localStorage.getItem('stock_Fly_3Day') || "[]").length;
+        document.getElementById('stockStatus').innerText = `کۆگای ئێستا: (یەکسەر: ${instant} دانە) | (٣ ڕۆژ: ${delayed} دانە)`;
+    }
+
+    function deleteItem(key) {
+        if(confirm("دڵنیایت لە سڕینەوە؟")) {
+            localStorage.removeItem(key);
+            renderUsers();
+        }
+    }
+
+    function renderSales() {
+        const sales = JSON.parse(localStorage.getItem('global_sales') || "[]");
+        const body = document.querySelector("#salesLog tbody");
+        body.innerHTML = sales.reverse().map(s => `
+            <tr>
+                <td>${s.user}</td>
+                <td>${s.prod}</td>
+                <td style="font-family:monospace">${s.code}</td>
+                <td style="font-size:0.8rem">${s.date}</td>
+            </tr>
+        `).join('');
+    }
+</script>
+
 </body>
 </html>
