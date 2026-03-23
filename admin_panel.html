@@ -6,82 +6,116 @@
     <title>Admin Panel | FLY MARKET</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .admin-grid { display: grid; grid-template-columns: 250px 1fr; gap: 20px; padding: 20px; }
-        .stat-card { background: #1e293b; padding: 20px; border-radius: 12px; border-top: 4px solid var(--main-blue); text-align: center; }
-        .form-group { background: #161d2f; padding: 20px; border-radius: 15px; margin-top: 20px; border: 1px solid #334155; }
-        input, select, textarea { 
-            width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; 
-            border: 1px solid #334155; background: #0b0f19; color: white; 
-        }
-        .btn-add { background: #10b981; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; margin-top: 15px; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #161d2f; border-radius: 10px; overflow: hidden; }
-        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #1e293b; }
-        th { background: #1e3a8a; color: white; }
+        .admin-container { padding: 30px 5%; }
+        .admin-card { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #1e293b; }
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        h2 { color: var(--blue); border-right: 4px solid var(--blue); padding-right: 15px; }
+        .btn-action { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-left: 5px; }
+        .btn-add { background: #10b981; color: white; }
+        .btn-delete { background: #ef4444; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #1e293b; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">FLY MARKET [ADMIN]</div>
-    <div>سڵاو بەڕێوەبەر 👋</div>
+<header class="header-bar">
+    <div class="logo-small">FLY MARKET [ADMIN]</div>
+    <a href="index.html" style="color: white; text-decoration: none;">چوونە دەرەوە</a>
 </header>
 
-<div class="admin-grid">
-    <aside class="sidebar">
-        <ul style="list-style: none; padding: 0;">
-            <li style="padding: 15px; background: var(--main-blue); border-radius: 8px; margin-bottom: 10px;">📊 سەرپێچی گشتی</li>
-            <li style="padding: 15px;">🛒 بەڕێوەبردنی کۆدەکان</li>
-            <li style="padding: 15px;">💰 داواکارییەکانی پارە</li>
-            <li style="padding: 15px;">👥 کڕیارەکان</li>
-            <li style="padding: 15px; color: #ef4444;">❌ چوونە دەرەوە</li>
-        </ul>
-    </aside>
-
-    <main>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-            <div class="stat-card"><h3>کۆی فرۆشتن</h3><p style="font-size: 1.5rem; color: #10b981;">$1,250.00</p></div>
-            <div class="stat-card"><h3>کۆدە چالاکەکان</h3><p style="font-size: 1.5rem; color: var(--main-blue);">42 دانە</p></div>
-            <div class="stat-card"><h3>داواکاری چاوەڕوانکراو</h3><p style="font-size: 1.5rem; color: #f59e0b;">5 داوا</p></div>
+<div class="admin-container">
+    <h2>بەڕێوەبردنی بریکارەکان (Users)</h2>
+    <div class="admin-card">
+        <div class="admin-grid">
+            <input type="text" id="newUsername" placeholder="ناوی بریکار">
+            <input type="number" id="newBalance" placeholder="بڕی پارە (دینار)">
         </div>
+        <button class="btn-action btn-add" style="margin-top: 15px; width: 100%;" onclick="addUser()">+ زیادکردنی بریکار</button>
+    </div>
 
-        <div class="form-group">
-            <h3>➕ زیادکردنی کۆدی نوێ بۆ لیستەکە</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <input type="text" id="pName" placeholder="ناوی بەرهەم (بۆ نموونە: PUBG UC)">
-                <input type="text" id="pPrice" placeholder="نرخ (بۆ نموونە: 15$)">
-            </div>
-            <textarea id="pDesc" rows="3" placeholder="وردەکاری کۆدەکە..."></textarea>
-            <button class="btn-add" onclick="addNewProduct()">بڵاوکردنەوەی کۆد</button>
-        </div>
-
-        <h3>📥 داواکارییەکانی پڕکردنەوەی باڵانس (Deposit Requests)</h3>
+    <div class="admin-card">
         <table>
             <thead>
                 <tr>
-                    <th>کڕیار</th>
-                    <th>بڕی پارە</th>
-                    <th>ڕێگەی ناردن</th>
+                    <th>ناوی بریکار</th>
+                    <th>باڵانس</th>
                     <th>کردارەکان</th>
                 </tr>
             </thead>
-            <tbody id="requestTable">
+            <tbody id="userTable">
                 <tr>
-                    <td>@Ahmad_Player</td>
-                    <td>25.00$</td>
-                    <td>FastPay</td>
+                    <td>shop1</td>
+                    <td>50,000 IQD</td>
                     <td>
-                        <button style="background:#10b981; border:none; color:white; padding:5px 10px; border-radius:5px;">قبوڵکردن</button>
-                        <button style="background:#ef4444; border:none; color:white; padding:5px 10px; border-radius:5px;">ڕەتکردنەوە</button>
+                        <button class="btn-action" style="background: var(--blue);" onclick="addMoney('shop1')">پارە زیاد بکە</button>
+                        <button class="btn-action btn-delete" onclick="deleteUser(this)">سڕینەوە</button>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </main>
+    </div>
+
+    <hr style="border: 0.5px solid #1e293b; margin: 40px 0;">
+
+    <h2>زیادکردنی بەرهەمی نوێ (Products)</h2>
+    <div class="admin-card">
+        <div class="admin-grid">
+            <input type="text" id="prodName" placeholder="ناوی بەرهەم">
+            <input type="text" id="prodPrice" placeholder="نرخ بە دینار">
+            <input type="text" id="prodGuarantee" placeholder="گەرەنتی (بۆ نموونە: ١ مانگ)">
+            <select id="prodStatus">
+                <option value="active">یەکسەر ئەکتیڤ</option>
+                <option value="delayed">دوای ٣ ڕۆژ</option>
+            </select>
+        </div>
+        <button class="btn-action btn-add" style="margin-top: 15px; width: 100%;" onclick="addProduct()">بڵاوکردنەوەی بەرهەم</button>
+    </div>
 </div>
 
 <script>
-    function addNewProduct() {
-        alert("کۆدەکە بە سەرکەوتوویی زیادکرا! (تێبینی: چونکە Database نییە، کاتییە)");
+    // فەنکشن بۆ زیادکردنی بریکار
+    function addUser() {
+        const name = document.getElementById('newUsername').value;
+        const balance = document.getElementById('newBalance').value;
+        
+        if(!name || !balance) return alert("تکایە هەموو خانەکان پڕ بکەرەوە");
+
+        const table = document.getElementById('userTable');
+        const row = `<tr>
+            <td>${name}</td>
+            <td>${parseInt(balance).toLocaleString()} IQD</td>
+            <td>
+                <button class="btn-action" style="background: var(--blue);" onclick="addMoney('${name}')">پارە زیاد بکە</button>
+                <button class="btn-action btn-delete" onclick="deleteUser(this)">سڕینەوە</button>
+            </td>
+        </tr>`;
+        table.innerHTML += row;
+        alert("بریکار زیادکرا!");
+    }
+
+    // فەنکشن بۆ سڕینەوە
+    function deleteUser(btn) {
+        if(confirm("دڵنیای لە سڕینەوەی ئەم بریکارە؟")) {
+            btn.parentElement.parentElement.remove();
+        }
+    }
+
+    // فەنکشن بۆ پارە زیادکردن
+    function addMoney(name) {
+        let amount = prompt(`چەند پارە زیاد دەکەیت بۆ ${name}?`);
+        if(amount) {
+            alert(`بڕی ${amount} دینار بۆ ${name} زیادکرا!`);
+        }
+    }
+
+    // فەنکشن بۆ زیادکردنی بەرهەم
+    function addProduct() {
+        const name = document.getElementById('prodName').value;
+        const price = document.getElementById('prodPrice').value;
+        if(!name || !price) return alert("زانیاری بەرهەم تەواو نییە");
+        
+        alert(`بەرهەمی ${name} بە سەرکەوتوویی بۆ سایتەکە زیادکرا و ئامادەیە بۆ فرۆشتن!`);
     }
 </script>
 
