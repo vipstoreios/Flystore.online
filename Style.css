@@ -1,0 +1,42 @@
+:root {
+    --main-blue: #007bff;
+    --dark-bg: #0b0f19;
+    --card-bg: #161d2f;
+    --text-white: #ffffff;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-white);
+    font-family: sans-serif;
+    margin: 0;
+}
+
+header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 5%; background: var(--card-bg); border-bottom: 2px solid var(--main-blue);
+}
+
+.logo { font-size: 24px; font-weight: bold; color: var(--main-blue); }
+
+.hero { text-align: center; padding: 80px 20px; background: linear-gradient(to bottom, #1e3a8a, #0b0f19); }
+
+.product-section { padding: 40px 5%; }
+
+.list-item {
+    background: var(--card-bg); margin-bottom: 10px; padding: 15px;
+    border-radius: 10px; display: flex; justify-content: space-between;
+    align-items: center; border: 1px solid #1e293b; transition: 0.3s;
+}
+
+.list-item:hover { border-color: var(--main-blue); transform: scale(1.01); }
+
+.btn-primary {
+    background: var(--main-blue); color: white; padding: 10px 25px;
+    border-radius: 8px; text-decoration: none; font-weight: bold;
+}
+
+#searchInput {
+    padding: 10px; border-radius: 8px; border: 1px solid var(--main-blue);
+    background: #1e293b; color: white; width: 250px;
+}
