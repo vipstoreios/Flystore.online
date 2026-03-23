@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly Market | Dashboard</title>
+    <title>Fly Market | Shop</title>
     <style>
         :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --text: #f8fafc; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin:0; }
         .nav { background: var(--card); padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #1f2937; align-items: center; }
+        .alert-box { background: rgba(14, 165, 233, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 12px; margin: 15px; border-radius: 10px; font-size: 14px; text-align: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
         .p-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #1f2937; text-align: center; }
         .btn-buy { background: var(--accent); border:none; padding:10px; border-radius:8px; width:100%; font-weight:bold; margin-top:10px; color:black; }
@@ -20,16 +21,18 @@
     <div style="font-weight:bold; color:var(--accent)">FLY MARKET</div>
     <div id="userSide">...</div>
 </div>
+
+<div id="admin_alert" class="alert-box" style="display:none;"></div>
+
 <div class="grid" id="prods"></div>
 <div style="padding: 15px;">
     <h3>📦 کڕینەکانت</h3>
-    <div style="overflow-x:auto;">
-        <table>
-            <thead><tr><th>کاڵا</th><th>کۆد</th><th>بەروار</th></tr></thead>
-            <tbody id="myLogs"></tbody>
-        </table>
-    </div>
+    <div style="overflow-x:auto;"><table id="logsTable">
+        <thead><tr><th>کاڵا</th><th>کۆد</th><th>بەروar</th></tr></thead>
+        <tbody id="myLogs"></tbody>
+    </table></div>
 </div>
+
 <script>
     const user = localStorage.getItem('session');
     if(!user) window.location.href="index.html";
@@ -37,6 +40,15 @@
     function init() {
         let d = JSON.parse(localStorage.getItem(`acc_${user}`));
         document.getElementById('userSide').innerHTML = `${user} | <b style="color:var(--accent)">${d.bal.toLocaleString()} IQD</b>`;
+        
+        // پشکنین بۆ نامەی نوێ
+        let msg = localStorage.getItem('fly_alert');
+        if(msg) {
+            let el = document.getElementById('admin_alert');
+            el.innerText = "📢 " + msg;
+            el.style.display = "block";
+        }
+
         renderProds();
         renderMyLogs();
     }
@@ -45,8 +57,7 @@
         let prods = JSON.parse(localStorage.getItem('prods') || "[]");
         document.getElementById('prods').innerHTML = prods.map(p => {
             let stk = JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]");
-            return `<div class="p-card"><h4>${p.n}</h4><h3 style="color:var(--accent)">${p.p.toLocaleString()}</h3><p>ماوە: ${stk.length}</p>
-            <button class="btn-buy" onclick="buy('${p.id}','${p.n}',${p.p})" ${stk.length==0?'disabled style="opacity:0.5"':''}>کڕین</button></div>`;
+            return `<div class="p-card"><h4>${p.n}</h4><h3 style="color:var(--accent)">${p.p.toLocaleString()}</h3><p>ماوە: ${stk.length}</p><button class="btn-buy" onclick="buy('${p.id}','${p.n}',${p.p})" ${stk.length==0?'disabled style="opacity:0.5"':''}>کڕین</button></div>`;
         }).join('');
     }
 
@@ -54,7 +65,7 @@
         let d = JSON.parse(localStorage.getItem(`acc_${user}`));
         let stk = JSON.parse(localStorage.getItem(`stk_${id}`));
         if(d.bal < price) return alert("باڵانست بەش ناکات!");
-        if(confirm(`کڕینی ${n} بە ${price} IQD؟`)) {
+        if(confirm(`کڕینی ${n}؟`)) {
             let code = stk.shift();
             d.bal -= price;
             localStorage.setItem(`acc_${user}`, JSON.stringify(d));
