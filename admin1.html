@@ -7,13 +7,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --border: #1f2937; --text: #f8fafc; }
+        :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --danger: #ef4444; --border: #1f2937; --text: #f8fafc; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; padding: 15px; margin:0; }
         .card { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
         input, select, textarea { background: #050810; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 10px; outline: none; }
         .btn { padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 5px; }
         .btn-p { background: var(--accent); color: black; }
+        .btn-d { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); }
         #lock { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; }
+        hr { border: 0; border-top: 1px solid var(--border); margin: 15px 0; }
     </style>
 </head>
 <body>
@@ -21,19 +23,38 @@
 
 <div id="cont" style="display:none;">
     <h2 style="text-align:center; color:var(--accent)">FLY ONLINE ADMIN</h2>
-    <div class="card"><h3>📢 بڵاوکراوەی گشتی</h3><input type="text" id="bm" placeholder="چی بنوسرێت؟"><button class="btn btn-p" onclick="db.ref('fly_alert').set(document.getElementById('bm').value)">ناردن</button></div>
     
-    <div class="card"><h3>💳 بەکارهێنەران و باڵانس</h3>
+    <div class="card">
+        <h3>📢 بڵاوکراوەی گشتی</h3>
+        <input type="text" id="bm" placeholder="چی بنوسرێت؟">
+        <button class="btn btn-p" onclick="db.ref('fly_alert').set(document.getElementById('bm').value)">ناردن</button>
+        <button class="btn btn-d" onclick="db.ref('fly_alert').remove()">لابردنی ئاگاداری</button>
+    </div>
+    
+    <div class="card">
+        <h3>💳 بەکارهێنەران و باڵانس</h3>
+        <label>هەڵبژاردنی یوزەر بۆ (باڵانس یان سڕینەوە):</label>
         <select id="bu"></select>
-        <input type="number" id="ba" placeholder="بڕی پارە (بۆ نموونە: 5000 یان -2000)"><button class="btn btn-p" onclick="addB()">نوێکردنەوەی باڵانس</button>
-        <hr style="border-color:var(--border)">
-        <input type="text" id="un" placeholder="ناوی نوێ"><input type="text" id="up" placeholder="پاسۆرد"><button class="btn btn-p" onclick="addU()">دروستکردنی یوزەر</button>
+        <input type="number" id="ba" placeholder="بڕی پارە (بۆ نموونە: 5000)">
+        <button class="btn btn-p" onclick="addB()">نوێکردنەوەی باڵانس</button>
+        <button class="btn btn-d" onclick="delU()">⚠️ سڕینەوەی ئەم یوزەرە</button>
+        <hr>
+        <h4>دروستکردنی یوزەری نوێ</h4>
+        <input type="text" id="un" placeholder="ناوی نوێ"><input type="text" id="up" placeholder="پاسۆرد">
+        <button class="btn btn-p" onclick="addU()">تۆمارکردن</button>
     </div>
 
-    <div class="card"><h3>🛍️ بەرهەمەکان</h3>
-        <input type="text" id="pn" placeholder="ناوی بەرهەم"><input type="number" id="pp" placeholder="نرخ بە دینار"><button class="btn btn-p" onclick="addP()">زیادکردنی بەرهەم</button>
-        <hr style="border-color:var(--border)">
-        <select id="ps"></select><textarea id="bc" rows="5" placeholder="کۆدەکان لێرە دابنێ (هەر یەکەی لە دێڕێک)"></textarea><button class="btn btn-p" onclick="addC()">زیادکردنی کۆد</button>
+    <div class="card">
+        <h3>🛍️ بەرهەمەکان</h3>
+        <input type="text" id="pn" placeholder="ناوی بەرهەم">
+        <input type="number" id="pp" placeholder="نرخ بە دینار">
+        <button class="btn btn-p" onclick="addP()">زیادکردنی بەرهەم</button>
+        <hr>
+        <label>هەڵبژاردنی بەرهەم (بۆ کۆد یان سڕینەوە):</label>
+        <select id="ps"></select>
+        <button class="btn btn-d" style="margin-bottom:10px" onclick="delP()">⚠️ سڕینەوەی ئەم بەرهەمە</button>
+        <textarea id="bc" rows="5" placeholder="کۆدەکان لێرە دابنێ (هەر یەکەی لە دێڕێک)"></textarea>
+        <button class="btn btn-p" onclick="addC()">زیادکردنی کۆد</button>
     </div>
 </div>
 
@@ -63,6 +84,7 @@
         });
     }
 
+    // --- User Actions ---
     function addU() {
         let u = document.getElementById('un').value.trim().toLowerCase();
         let p = document.getElementById('up').value.trim();
@@ -77,9 +99,24 @@
         alert("باڵانس گۆڕدرا");
     }
 
+    function delU() {
+        let u = document.getElementById('bu').value;
+        if(u && confirm(`ئایا دڵنیایت لە سڕینەوەی یوزەری (${u})؟`)) {
+            db.ref('users/' + u).remove();
+        }
+    }
+
+    // --- Product Actions ---
     function addP() {
         let n = document.getElementById('pn').value; let p = document.getElementById('pp').value;
         if(n && p) { db.ref('products').push({n, p:parseInt(p)}); alert("بەرهەم زیادکرا"); }
+    }
+
+    function delP() {
+        let id = document.getElementById('ps').value;
+        if(id && confirm("ئایا دڵنیایت لە سڕینەوەی ئەم بەرهەمە؟")) {
+            db.ref('products/' + id).remove();
+        }
     }
 
     function addC() {
