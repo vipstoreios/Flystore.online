@@ -2,17 +2,17 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard | Fly Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fly Market | Dashboard</title>
     <style>
         :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --text: #f8fafc; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin:0; }
-        .nav { background: var(--card); padding: 15px 5%; display: flex; justify-content: space-between; border-bottom: 1px solid #1f2937; }
-        .alert { background: rgba(14, 165, 233, 0.1); color: var(--accent); padding: 15px; margin: 20px 5%; border-radius: 12px; border: 1px solid var(--accent); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px 5%; }
-        .p-card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #1f2937; text-align: center; }
-        .btn-buy { background: var(--accent); border:none; padding:10px; border-radius:10px; width:100%; font-weight:bold; cursor:pointer; margin-top:10px; }
-        table { width:90%; margin:auto; border-collapse:collapse; }
-        th, td { padding:12px; border-bottom:1px solid #1f2937; text-align:right; }
+        .nav { background: var(--card); padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #1f2937; align-items: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
+        .p-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #1f2937; text-align: center; }
+        .btn-buy { background: var(--accent); border:none; padding:10px; border-radius:8px; width:100%; font-weight:bold; margin-top:10px; color:black; }
+        table { width: 95%; margin: 10px auto; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px; border-bottom: 1px solid #1f2937; text-align: right; }
     </style>
 </head>
 <body>
@@ -20,19 +20,16 @@
     <div style="font-weight:bold; color:var(--accent)">FLY MARKET</div>
     <div id="userSide">...</div>
 </div>
-
-<div id="broadcast" class="alert" style="display:none"></div>
-
 <div class="grid" id="prods"></div>
-
-<div style="padding: 5%;">
+<div style="padding: 15px;">
     <h3>📦 کڕینەکانت</h3>
-    <table>
-        <thead><tr><th>کاڵا</th><th>کۆد</th><th>بەروار</th></tr></thead>
-        <tbody id="myLogs"></tbody>
-    </table>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead><tr><th>کاڵا</th><th>کۆد</th><th>بەروار</th></tr></thead>
+            <tbody id="myLogs"></tbody>
+        </table>
+    </div>
 </div>
-
 <script>
     const user = localStorage.getItem('session');
     if(!user) window.location.href="index.html";
@@ -40,50 +37,32 @@
     function init() {
         let d = JSON.parse(localStorage.getItem(`acc_${user}`));
         document.getElementById('userSide').innerHTML = `${user} | <b style="color:var(--accent)">${d.bal.toLocaleString()} IQD</b>`;
-        
-        let msg = localStorage.getItem('alert_msg');
-        if(msg) { 
-            let b = document.getElementById('broadcast');
-            b.innerText = "📢 " + msg;
-            b.style.display = 'block';
-        }
-
         renderProds();
         renderMyLogs();
     }
 
     function renderProds() {
         let prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        const div = document.getElementById('prods');
-        div.innerHTML = prods.map(p => {
+        document.getElementById('prods').innerHTML = prods.map(p => {
             let stk = JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]");
-            return `
-                <div class="p-card">
-                    <h3>${p.n}</h3>
-                    <h2 style="color:var(--accent)">${p.p.toLocaleString()} IQD</h2>
-                    <p style="font-size:0.8rem">Stock: ${stk.length}</p>
-                    <button class="btn-buy" onclick="buy('${p.id}','${p.n}',${p.p})" ${stk.length==0?'disabled style="opacity:0.5"':''}>کڕین</button>
-                </div>
-            `;
+            return `<div class="p-card"><h4>${p.n}</h4><h3 style="color:var(--accent)">${p.p.toLocaleString()}</h3><p>ماوە: ${stk.length}</p>
+            <button class="btn-buy" onclick="buy('${p.id}','${p.n}',${p.p})" ${stk.length==0?'disabled style="opacity:0.5"':''}>کڕین</button></div>`;
         }).join('');
     }
 
     function buy(id, n, price) {
         let d = JSON.parse(localStorage.getItem(`acc_${user}`));
         let stk = JSON.parse(localStorage.getItem(`stk_${id}`));
-        
         if(d.bal < price) return alert("باڵانست بەش ناکات!");
-        if(confirm(`ئایا دڵنیایت لە کڕینی ${n}؟`)) {
+        if(confirm(`کڕینی ${n} بە ${price} IQD؟`)) {
             let code = stk.shift();
             d.bal -= price;
             localStorage.setItem(`acc_${user}`, JSON.stringify(d));
             localStorage.setItem(`stk_${id}`, JSON.stringify(stk));
-            
             let logs = JSON.parse(localStorage.getItem('logs') || "[]");
-            logs.push({u:user, p:n, c:code, d:new Date().toLocaleString()});
+            logs.push({u:user, p:n, c:code, d:new Date().toLocaleString(), price: price});
             localStorage.setItem('logs', JSON.stringify(logs));
-            
-            alert("سەرکەوتوو بوو! کۆدەکەت: " + code);
+            alert("کۆدەکەت: " + code);
             location.reload();
         }
     }
@@ -91,9 +70,8 @@
     function renderMyLogs() {
         let logs = JSON.parse(localStorage.getItem('logs') || "[]");
         let my = logs.filter(l => l.u === user).reverse();
-        document.getElementById('myLogs').innerHTML = my.map(m => `<tr><td>${m.p}</td><td style="color:var(--accent); font-family:monospace">${m.c}</td><td>${m.d}</td></tr>`).join('');
+        document.getElementById('myLogs').innerHTML = my.map(m => `<tr><td>${m.p}</td><td style="color:var(--accent)">${m.c}</td><td>${m.d}</td></tr>`).join('');
     }
-
     init();
 </script>
 </body>
