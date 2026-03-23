@@ -2,159 +2,99 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLY MARKET | داشبۆردی کڕین</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Dashboard | Fly Market</title>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f1f5f9; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; }
-        .header-bar { background: var(--card); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent); position: sticky; top: 0; z-index: 100; }
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .balance-box { background: var(--accent); color: #0f172a; padding: 8px 15px; border-radius: 10px; font-weight: bold; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 30px 5%; }
-        .product-card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #334155; text-align: center; transition: 0.3s; }
-        .product-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .price { color: var(--accent); font-size: 1.6rem; font-weight: bold; margin: 15px 0; }
-        .btn-buy { background: var(--accent); color: #0f172a; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; }
-        .no-stock { background: #334155 ! desperation; cursor: not-allowed; opacity: 0.5; }
-        .orders-section { margin: 20px 5%; background: var(--card); padding: 20px; border-radius: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #334155; }
-        .code-display { font-family: monospace; color: var(--accent); font-weight: bold; background: #0f172a; padding: 5px; border-radius: 5px; }
+        :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --text: #f8fafc; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin:0; }
+        .nav { background: var(--card); padding: 15px 5%; display: flex; justify-content: space-between; border-bottom: 1px solid #1f2937; }
+        .alert { background: rgba(14, 165, 233, 0.1); color: var(--accent); padding: 15px; margin: 20px 5%; border-radius: 12px; border: 1px solid var(--accent); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px 5%; }
+        .p-card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #1f2937; text-align: center; }
+        .btn-buy { background: var(--accent); border:none; padding:10px; border-radius:10px; width:100%; font-weight:bold; cursor:pointer; margin-top:10px; }
+        table { width:90%; margin:auto; border-collapse:collapse; }
+        th, td { padding:12px; border-bottom:1px solid #1f2937; text-align:right; }
     </style>
 </head>
 <body>
+<div class="nav">
+    <div style="font-weight:bold; color:var(--accent)">FLY MARKET</div>
+    <div id="userSide">...</div>
+</div>
 
-<header class="header-bar">
-    <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent);">FLY MARKET</div>
-    <div class="user-info">
-        <span id="userNameDisplay" style="color: #94a3b8;">...</span>
-        <div class="balance-box" id="userBalance">باڵانس: 0 IQD</div>
-        <button onclick="logout()" style="background:none; border:none; color:#f43f5e; cursor:pointer;">دەرچوون</button>
-    </div>
-</header>
+<div id="broadcast" class="alert" style="display:none"></div>
 
-<div class="grid-container" id="productGrid">
-    </div>
+<div class="grid" id="prods"></div>
 
-<section class="orders-section">
-    <h3>📦 کڕینەکانت (کۆدەکان)</h3>
-    <table id="myOrders">
-        <thead>
-            <tr>
-                <th>بەرهەم</th>
-                <th>کۆدی کڕدراو</th>
-                <th>بەروار</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
+<div style="padding: 5%;">
+    <h3>📦 کڕینەکانت</h3>
+    <table>
+        <thead><tr><th>کاڵا</th><th>کۆد</th><th>بەروار</th></tr></thead>
+        <tbody id="myLogs"></tbody>
     </table>
-</section>
+</div>
 
 <script>
-    // ١. دڵنیابوونەوە لەوەی بریکار داخڵ بووە
-    const currentUser = localStorage.getItem("currentUser");
-    if (!currentUser) {
-        window.location.href = "index.html";
-    }
+    const user = localStorage.getItem('session');
+    if(!user) window.location.href="index.html";
 
-    // ٢. بارکردنی زانیارییەکانی بریکار
-    function loadUserData() {
-        const data = JSON.parse(localStorage.getItem(`account_${currentUser}`));
-        if (data) {
-            document.getElementById('userNameDisplay').innerText = "بریکار: " + currentUser;
-            document.getElementById('userBalance').innerText = `باڵانس: ${data.balance.toLocaleString()} IQD`;
+    function init() {
+        let d = JSON.parse(localStorage.getItem(`acc_${user}`));
+        document.getElementById('userSide').innerHTML = `${user} | <b style="color:var(--accent)">${d.bal.toLocaleString()} IQD</b>`;
+        
+        let msg = localStorage.getItem('alert_msg');
+        if(msg) { 
+            let b = document.getElementById('broadcast');
+            b.innerText = "📢 " + msg;
+            b.style.display = 'block';
         }
+
+        renderProds();
+        renderMyLogs();
     }
 
-    // ٣. نیشاندانی ئەو بەرهەمانەی لە ئەدمین پانێڵ زیادکراون
-    function renderProducts() {
-        const products = JSON.parse(localStorage.getItem("store_products") || "[]");
-        const grid = document.getElementById('productGrid');
-        grid.innerHTML = "";
-
-        products.forEach(p => {
-            const stock = JSON.parse(localStorage.getItem(`stock_${p.id}`) || "[]");
-            const hasStock = stock.length > 0;
-
-            grid.innerHTML += `
-                <div class="product-card">
-                    <span style="font-size:0.8rem; color:#94a3b8;">${p.guarantee || 'بێ گەرەنتی'}</span>
-                    <h3>${p.name}</h3>
-                    <div class="price">${p.price.toLocaleString()} IQD</div>
-                    <p style="font-size:0.8rem; color:${hasStock ? '#10b981' : '#f43f5e'}">
-                        ${hasStock ? `لە کۆگا ماوە: ${stock.length}` : 'کۆگا خاڵییە'}
-                    </p>
-                    <button class="btn-buy ${!hasStock ? 'no-stock' : ''}" 
-                            onclick="buyProduct('${p.id}', '${p.name}', ${p.price})" 
-                            ${!hasStock ? 'disabled' : ''}>
-                        ${hasStock ? 'کڕینی خێرا' : 'تەواو بووە'}
-                    </button>
+    function renderProds() {
+        let prods = JSON.parse(localStorage.getItem('prods') || "[]");
+        const div = document.getElementById('prods');
+        div.innerHTML = prods.map(p => {
+            let stk = JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]");
+            return `
+                <div class="p-card">
+                    <h3>${p.n}</h3>
+                    <h2 style="color:var(--accent)">${p.p.toLocaleString()} IQD</h2>
+                    <p style="font-size:0.8rem">Stock: ${stk.length}</p>
+                    <button class="btn-buy" onclick="buy('${p.id}','${p.n}',${p.p})" ${stk.length==0?'disabled style="opacity:0.5"':''}>کڕین</button>
                 </div>
             `;
-        });
+        }).join('');
     }
 
-    // ٤. پڕۆسەی کڕین (بڕینی پارە و دانی کۆد)
-    function buyProduct(pId, pName, pPrice) {
-        let userData = JSON.parse(localStorage.getItem(`account_${currentUser}`));
-        let stock = JSON.parse(localStorage.getItem(`stock_${pId}`) || "[]");
-
-        if (userData.balance < pPrice) {
-            alert("باڵانسی پێویستت نییە!");
-            return;
-        }
-
-        if (confirm(`ئایا دڵنیایت لە کڕینی ${pName}؟`)) {
-            // دەرهێنانی کۆد لە کۆگا
-            const code = stock.shift(); // یەکەم کۆد دەبات
+    function buy(id, n, price) {
+        let d = JSON.parse(localStorage.getItem(`acc_${user}`));
+        let stk = JSON.parse(localStorage.getItem(`stk_${id}`));
+        
+        if(d.bal < price) return alert("باڵانست بەش ناکات!");
+        if(confirm(`ئایا دڵنیایت لە کڕینی ${n}؟`)) {
+            let code = stk.shift();
+            d.bal -= price;
+            localStorage.setItem(`acc_${user}`, JSON.stringify(d));
+            localStorage.setItem(`stk_${id}`, JSON.stringify(stk));
             
-            // کەمکردنەوەی باڵانس
-            userData.balance -= pPrice;
-
-            // نوێکردنەوەی داتاکان لە ناو سیستم
-            localStorage.setItem(`account_${currentUser}`, JSON.stringify(userData));
-            localStorage.setItem(`stock_${pId}`, JSON.stringify(stock));
-
-            // تۆمارکردنی مامەڵە بۆ ئەدمین
-            saveLog(pName, code);
-
-            // نیشاندانی ئەنجام
-            alert("کڕین سەرکەوتوو بوو!\nکۆدەکەت: " + code);
-            location.reload(); 
+            let logs = JSON.parse(localStorage.getItem('logs') || "[]");
+            logs.push({u:user, p:n, c:code, d:new Date().toLocaleString()});
+            localStorage.setItem('logs', JSON.stringify(logs));
+            
+            alert("سەرکەوتوو بوو! کۆدەکەت: " + code);
+            location.reload();
         }
     }
 
-    function saveLog(pName, code) {
-        let logs = JSON.parse(localStorage.getItem("global_sales") || "[]");
-        logs.push({
-            user: currentUser,
-            productName: pName,
-            code: code,
-            date: new Date().toLocaleString()
-        });
-        localStorage.setItem("global_sales", JSON.stringify(logs));
+    function renderMyLogs() {
+        let logs = JSON.parse(localStorage.getItem('logs') || "[]");
+        let my = logs.filter(l => l.u === user).reverse();
+        document.getElementById('myLogs').innerHTML = my.map(m => `<tr><td>${m.p}</td><td style="color:var(--accent); font-family:monospace">${m.c}</td><td>${m.d}</td></tr>`).join('');
     }
 
-    function logout() {
-        localStorage.removeItem("currentUser");
-        window.location.href = "index.html";
-    }
-
-    window.onload = function() {
-        loadUserData();
-        renderProducts();
-        // بارکردنی مێژووی کڕینی ئەم بریکارە
-        const logs = JSON.parse(localStorage.getItem("global_sales") || "[]");
-        const myLogs = logs.filter(l => l.user === currentUser).reverse();
-        document.getElementById('myOrders').querySelector('tbody').innerHTML = myLogs.map(l => `
-            <tr>
-                <td>${l.productName}</td>
-                <td><span class="code-display">${l.code}</span></td>
-                <td>${l.date.split(',')[0]}</td>
-            </tr>
-        `).join('');
-    };
+    init();
 </script>
 </body>
 </html>
