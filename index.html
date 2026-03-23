@@ -3,37 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLY MARKET | P2P Store</title>
+    <title>Fly Market | چوونەژوورەوەی بریکاران</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #0b0f19;
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            margin: 0; color: white; font-family: sans-serif;
+        }
+        .login-card {
+            background: #161d2f; padding: 40px; border-radius: 20px;
+            width: 100%; max-width: 400px; text-align: center;
+            border: 1px solid #1e3a8a; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .logo { font-size: 2rem; font-weight: bold; color: #38bdf8; margin-bottom: 10px; }
+        input {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px;
+            border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box;
+        }
+        .btn-login {
+            width: 100%; padding: 12px; background: #38bdf8; color: #000;
+            border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+        .note { color: #94a3b8; font-size: 0.8rem; margin-top: 20px; }
+    </style>
 </head>
 <body>
 
-<header>
+<div class="login-card">
     <div class="logo">FLY MARKET</div>
-    <nav>
-        <a href="#" class="nav-link">چوونەژوورەوە</a>
-        <a href="#" class="btn-primary">تۆمارکردن</a>
-    </nav>
-</header>
-
-<section class="hero">
-    <h1>گەورەترین بازاڕی P2P بۆ کۆدی هاک</h1>
-    <p>کۆدەکانی خۆت بفرۆشە یان بە گەرەنتییەکی تەواوەوە بکڕە.</p>
-    <div class="payments">
-        <span>FastPay</span> | <span>FIB</span> | <span>ZainCash</span> | <span>USDT</span>
-    </div>
-</section>
-
-<section class="product-section">
-    <div class="section-header">
-        <h2>لیستی کۆدە بەردەستەکان</h2>
-        <input type="text" id="searchInput" placeholder="گەڕان بۆ کۆد...">
-    </div>
+    <p>تایبەت بە بریکاران و دوکاندارەکان</p>
     
-    <div class="product-list" id="productList">
-        </div>
-</section>
+    <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
+    <input type="password" id="password" placeholder="وشەی نهێنی">
+    <button class="btn-login" onclick="login()">چوونەژوورەوە</button>
+    
+    <p class="note">ئەگەر ئەکاونتت نییە، پەیوەندی بە بەڕێوەبەر بکە بۆ دروستکردن.</p>
+</div>
 
-<script src="script.js"></script>
+<script>
+    function login() {
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+
+        // ئەمە تەنها بۆ تێستە، دواتر دەکرێت بە داتابەیس
+        if(user === "shop1" && pass === "1234") {
+            window.location.href = "shop_dashboard.html";
+        } else {
+            alert("زانیارییەکان هەڵەیە!");
+        }
+    }
+</script>
+
 </body>
 </html>
