@@ -7,29 +7,48 @@
     <style>
         body { background: #050810; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; margin: 0; }
         .box { background: #111827; padding: 30px; border-radius: 20px; border: 1px solid #1f2937; width: 90%; max-width: 350px; text-align: center; }
-        input { background: #050810; border: 1px solid #1f2937; color: white; padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; outline: none; }
+        input { background: #050810; border: 1px solid #1f2937; color: white; padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; outline: none; text-align: center; }
         .btn { background: #0ea5e9; color: black; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; }
     </style>
 </head>
 <body>
 <div class="box">
     <h1 style="color:#0ea5e9">FLY MARKET</h1>
-    <input type="text" id="user" placeholder="ناوی بەکارهێنەر" autocapitalize="none">
+    <input type="text" id="user" placeholder="ناوی بەکارهێنەر" autocapitalize="none" spellcheck="false">
     <input type="password" id="pass" placeholder="وشەی نهێنی">
     <button class="btn" onclick="login()">چوونەژوورەوە</button>
 </div>
 <script>
     function login() {
-        let u = document.getElementById('user').value.trim().toLowerCase();
-        let p = document.getElementById('pass').value.trim();
-        let data = localStorage.getItem(`acc_${u}`);
-        if(data) {
-            let d = JSON.parse(data);
-            if(d.pass === p) {
-                localStorage.setItem('session', u);
+        const uInput = document.getElementById('user').value.trim().toLowerCase();
+        const pInput = document.getElementById('pass').value.trim();
+
+        if(!uInput || !pInput) {
+            alert("تکایە هەموو خانەکان پڕ بکەرەوە");
+            return;
+        }
+
+        // پشکنینی داتاکان لەناو localStorage
+        const storageKey = `acc_${uInput}`;
+        const rawData = localStorage.getItem(storageKey);
+
+        if(rawData) {
+            const userData = JSON.parse(rawData);
+            if(userData.pass === pInput) {
+                localStorage.setItem('session', uInput);
                 window.location.href = "shop_dashboard.html";
-            } else { alert("پاسورد هەڵەیە!"); }
-        } else { alert("ئەم یوزەرە بوونی نییە لە سیستمدا!"); }
+            } else {
+                alert("وشەی نهێنی هەڵەیە!");
+            }
+        } else {
+            // ئەگەر یوزەرەکە نەبوو، پشکنین بکە بزانە هیچ یوزەرێک هەیە؟
+            let allKeys = Object.keys(localStorage).filter(k => k.startsWith('acc_'));
+            if(allKeys.length === 0) {
+                alert("هیچ یوزەرێک لە سیستمدا نییە! سەرەتا لە ئەدمین پانێڵ یوزەر دروست بکە.");
+            } else {
+                alert("ئەم یوزەرە (" + uInput + ") بوونی نییە!");
+            }
+        }
     }
 </script>
 </body>
