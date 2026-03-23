@@ -3,127 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly Market | Dashboard</title>
+    <title>Fly Market | Shop</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --danger: #ef4444; --text: #f8fafc; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin:0; padding-bottom: 50px; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin:0; }
         .nav { background: var(--card); padding: 12px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #1f2937; align-items: center; position: sticky; top:0; z-index:100; }
-        .logout { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 5px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: bold; }
-        .alert-box { background: rgba(14, 165, 233, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 15px; margin: 15px; border-radius: 12px; text-align: center; border-right: 5px solid var(--accent); }
+        .logout { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+        .alert-box { background: rgba(14, 165, 233, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 12px; margin: 15px; border-radius: 10px; text-align: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
-        .p-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #1f2937; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .btn-buy { background: var(--accent); border:none; padding:12px; border-radius:10px; width:100%; font-weight:bold; margin-top:10px; color:black; cursor: pointer; }
+        .p-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #1f2937; text-align: center; }
+        .btn-buy { background: var(--accent); border:none; padding:10px; border-radius:8px; width:100%; font-weight:bold; margin-top:10px; color:black; cursor:pointer; }
         table { width: 95%; margin: 10px auto; border-collapse: collapse; font-size: 13px; }
-        th, td { padding: 12px; border-bottom: 1px solid #1f2937; text-align: right; }
-        .price { color: var(--accent); font-weight: bold; font-size: 18px; }
+        th, td { padding: 10px; border-bottom: 1px solid #1f2937; text-align: right; }
     </style>
 </head>
 <body>
 <div class="nav">
-    <div style="font-weight:bold; color:var(--accent); font-size: 20px;">FLY MARKET</div>
+    <div style="font-weight:bold; color:var(--accent)">FLY MARKET</div>
     <div style="display:flex; align-items:center; gap:10px;">
-        <div id="userSide" style="font-size:12px; text-align:left; line-height: 1.4;"></div>
+        <div id="userSide" style="font-size:12px; text-align:left;">Loading...</div>
         <button class="logout" onclick="logout()">دەرچوون</button>
     </div>
 </div>
-
 <div id="admin_alert" class="alert-box" style="display:none;"></div>
-
 <div class="grid" id="prods"></div>
-
-<div style="padding: 20px;">
-    <h3 style="border-right: 4px solid var(--accent); padding-right: 10px;">📦 مێژووی کڕینەکانت</h3>
-    <div style="overflow-x:auto;">
-        <table>
-            <thead><tr><th>بەرهەم</th><th>کۆدی کڕدراو</th><th>بەروار</th></tr></thead>
-            <tbody id="myLogs"></tbody>
-        </table>
-    </div>
-</div>
+<div style="padding: 15px;"><h3>📦 کڕینەکانت</h3><div style="overflow-x:auto;"><table><thead><tr><th>بەرهەم</th><th>کۆد</th><th>بەروار</th></tr></thead><tbody id="myLogs"></tbody></table></div></div>
 
 <script>
-    const userSession = localStorage.getItem('session');
-    if(!userSession) window.location.href="index.html";
+    const firebaseConfig = {
+        apiKey: "AIzaSyBohQKrv5zn4N8-jvMI5lWJsKnbQ1AgBXw",
+        authDomain: "flystoreon-f2abc.firebaseapp.com",
+        projectId: "flystoreon-f2abc",
+        databaseURL: "https://flystoreon-f2abc-default-rtdb.firebaseio.com",
+        storageBucket: "flystoreon-f2abc.firebasestorage.app",
+        messagingSenderId: "249136797109",
+        appId: "1:249136797109:web:860229c474737fd3c5f5fc"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const user = localStorage.getItem('session');
+    if(!user) window.location.href="index.html";
 
-    function logout() { 
-        if(confirm("ئایا دڵنیایت لە دەرچوون؟")) {
-            localStorage.removeItem('session'); 
-            window.location.href="index.html"; 
-        }
-    }
+    function logout() { localStorage.removeItem('session'); window.location.href="index.html"; }
 
     function init() {
-        let userData = localStorage.getItem(`acc_${userSession}`);
-        if(!userData) {
-            localStorage.removeItem('session');
-            window.location.href="index.html";
-            return;
-        }
-        
-        let d = JSON.parse(userData);
-        document.getElementById('userSide').innerHTML = `بریکار: <b>${userSession}</b><br><span style="color:var(--accent)">${d.bal.toLocaleString()} IQD</span>`;
-        
-        let msg = localStorage.getItem('fly_alert');
-        if(msg) { 
-            let el = document.getElementById('admin_alert'); 
-            el.innerText = "📢 " + msg; 
-            el.style.display = "block"; 
-        }
-        
-        renderProds(); 
-        renderMyLogs();
+        db.ref('users/' + user).on('value', (s) => {
+            let d = s.val();
+            if(!d) return logout();
+            document.getElementById('userSide').innerHTML = `${user}<br><b style="color:var(--accent)">${d.bal.toLocaleString()} IQD</b>`;
+        });
+        db.ref('fly_alert').on('value', (s) => {
+            if(s.val()) { document.getElementById('admin_alert').innerText = "📢 " + s.val(); document.getElementById('admin_alert').style.display = "block"; }
+        });
+        renderProds(); renderLogs();
     }
 
     function renderProds() {
-        let prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        document.getElementById('prods').innerHTML = prods.map(p => {
-            let stk = JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]");
-            let isOut = stk.length === 0;
-            return `
-                <div class="p-card">
-                    <h4 style="margin:5px 0;">${p.n}</h4>
-                    <div class="price">${p.p.toLocaleString()}</div>
-                    <p style="color:#94a3b8; font-size:12px;">مەوجود: ${stk.length}</p>
-                    <button class="btn-buy" onclick="buy('${p.id}','${p.n}',${p.p})" 
-                    ${isOut ? 'disabled style="background:#374151; color:#94a3b8;"' : ''}>
-                    ${isOut ? 'تەواو بووە' : 'کڕین'}
-                    </button>
-                </div>`;
-        }).join('') || "<p style='grid-column:1/-1; text-align:center;'>هیچ بەرهەمێک نییە</p>";
+        db.ref('products').on('value', (s) => {
+            let prods = s.val() || {};
+            document.getElementById('prods').innerHTML = Object.keys(prods).map(id => {
+                let p = prods[id];
+                let stk = p.stock ? Object.values(p.stock) : [];
+                return `<div class="p-card"><h4>${p.n}</h4><h3 style="color:var(--accent)">${p.p.toLocaleString()}</h3><p>ماوە: ${stk.length}</p>
+                <button class="btn-buy" onclick="buy('${id}','${p.n}',${p.p})" ${stk.length==0?'disabled style="opacity:0.5"':''}>کڕین</button></div>`;
+            }).join('');
+        });
     }
 
-    function buy(id, n, price) {
-        let d = JSON.parse(localStorage.getItem(`acc_${userSession}`));
-        let stk = JSON.parse(localStorage.getItem(`stk_${id}`));
+    async function buy(id, n, price) {
+        const s = await db.ref('users/' + user).once('value');
+        const userData = s.val();
+        if(userData.bal < price) return alert("باڵانست بەش ناکات!");
         
-        if(d.bal < price) return alert("باڵانست بەش ناکات!");
+        const st = await db.ref(`products/${id}/stock`).limitToFirst(1).once('value');
+        if(!st.exists()) return alert("ئەم بەرهەمە تەواو بووە!");
         
-        if(confirm(`کڕینی ${n} بە بڕی ${price}؟`)) {
-            let code = stk.shift(); 
-            d.bal -= price;
-            
-            localStorage.setItem(`acc_${userSession}`, JSON.stringify(d));
-            localStorage.setItem(`stk_${id}`, JSON.stringify(stk));
-            
-            let logs = JSON.parse(localStorage.getItem('logs') || "[]");
-            logs.push({u:userSession, p:n, c:code, d:new Date().toLocaleString(), price: price});
-            localStorage.setItem('logs', JSON.stringify(logs));
-            
-            alert("سەرکەوتوو بوو! کۆدەکە: " + code); 
-            location.reload();
+        if(confirm(`ئایا دڵنیایت لە کڕینی ${n}؟`)) {
+            let key = Object.keys(st.val())[0];
+            let code = st.val()[key];
+            await db.ref(`products/${id}/stock/${key}`).remove();
+            await db.ref('users/' + user + '/bal').set(userData.bal - price);
+            await db.ref('logs').push({u:user, p:n, c:code, d:new Date().toLocaleString()});
+            alert("سەرکەوتوو بوو! کۆدەکە: " + code);
         }
     }
 
-    function renderMyLogs() {
-        let logs = JSON.parse(localStorage.getItem('logs') || "[]");
-        let my = logs.filter(l => l.u === userSession).reverse();
-        document.getElementById('myLogs').innerHTML = my.map(m => `
-            <tr>
-                <td>${m.p}</td>
-                <td style="color:var(--accent); font-weight:bold;">${m.c}</td>
-                <td style="font-size:11px; color:#94a3b8;">${m.d}</td>
-            </tr>
-        `).join('') || "<tr><td colspan='3' style='text-align:center;'>هیچ کڕینێک نەکراوە</td></tr>";
+    function renderLogs() {
+        db.ref('logs').on('value', (s) => {
+            let logs = s.val() || {};
+            let my = Object.values(logs).filter(l => l.u === user).reverse();
+            document.getElementById('myLogs').innerHTML = my.map(m => `<tr><td>${m.p}</td><td style="color:var(--accent)">${m.c}</td><td>${m.d}</td></tr>`).join('');
+        });
     }
     init();
 </script>
