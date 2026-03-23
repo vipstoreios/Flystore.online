@@ -2,37 +2,67 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Control | Fly Market</title>
+    <title>بەڕێوەبەری فڵای ستۆر</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-box { background: #161d2f; padding: 20px; border-radius: 15px; margin: 20px auto; max-width: 600px; border: 1px solid #38bdf8; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #334155; background: #0b0f19; color: white; }
+        .btn { background: #38bdf8; color: black; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
+        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+        th, td { padding: 10px; border-bottom: 1px solid #334155; text-align: center; }
+    </style>
 </head>
 <body>
-    <div style="padding: 20px;">
+    <div class="admin-box">
         <h2>بەڕێوەبردنی بریکارەکان</h2>
-        <div class="product-card" style="max-width: 500px; margin: auto;">
-            <input type="text" id="targetUser" placeholder="ناوی بریکار (Username)">
-            <input type="number" id="amountToAdd" placeholder="بڕی پارە بە دینار">
-            <button class="btn-buy" style="background: #10b981;" onclick="updateBalance()">زیادکردنی باڵانس</button>
-        </div>
-
-        <h2 style="margin-top: 40px;">لیستی گشتی کڕینەکان</h2>
-        <table id="adminLogs">
+        <input type="text" id="uName" placeholder="ناوی بریکار">
+        <input type="number" id="uBalance" placeholder="باڵانس بە دینار">
+        <button class="btn" onclick="saveUser()">تۆمارکردن و زیادکردن</button>
+        
+        <table id="userList">
             <thead>
-                <tr><th>بریکار</th><th>بەرهەم</th><th>بڕی پارە</th></tr>
+                <tr>
+                    <th>بریکار</th>
+                    <th>باڵانس</th>
+                    <th>کردار</th>
+                </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
 
     <script>
-        function updateBalance() {
-            const user = document.getElementById('targetUser').value;
-            const amount = document.getElementById('amountToAdd').value;
-            if(user && amount) {
-                // لێرەدا فایەربەیس باڵانسی ئەو یوزەرە نوێ دەکاتەوە
-                alert(`بڕی ${amount} دینار بۆ ${user} زیادکرا.`);
-                localStorage.setItem("balance", amount); // بۆ تێست
+        function saveUser() {
+            const name = document.getElementById('uName').value;
+            const balance = document.getElementById('uBalance').value;
+            if(!name || !balance) return alert("خانەکان پڕ بکەرەوە");
+
+            // سەیڤکردن لە ناو میمۆری وێبگەڕ (LocalStorage)
+            localStorage.setItem("db_user_" + name, balance);
+            loadUsers();
+            alert("سەرکەوتوو بوو!");
+        }
+
+        function loadUsers() {
+            const tbody = document.querySelector("#userList tbody");
+            tbody.innerHTML = "";
+            for (let i = 0; i < localStorage.length; i++) {
+                let key = localStorage.key(i);
+                if (key.startsWith("db_user_")) {
+                    let name = key.replace("db_user_", "");
+                    let bal = localStorage.getItem(key);
+                    tbody.innerHTML += `<tr>
+                        <td>${name}</td>
+                        <td>${parseInt(bal).toLocaleString()} د.ع</td>
+                        <td><button onclick="deleteUser('${key}')" style="color:red; background:none; border:none; cursor:pointer;">سڕینەوە</button></td>
+                    </tr>`;
+                }
             }
         }
+        function deleteUser(key) {
+            if(confirm("دڵنیایت؟")) { localStorage.removeItem(key); loadUsers(); }
+        }
+        loadUsers();
     </script>
 </body>
 </html>
