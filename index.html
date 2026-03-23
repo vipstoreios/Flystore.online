@@ -3,32 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly Market | Login</title>
+    <title>Fly Market | چوونەژوورەوەی بریکاران</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ستایلێکی کورت بۆ ئەوەی دیزاینەکەی تێک نەچێت */
+        .error-msg {
+            color: #f43f5e;
+            background: rgba(244, 63, 94, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: none; /* سەرەتا دیار نییە */
+            border: 1px solid #f43f5e;
+        }
+    </style>
 </head>
 <body class="login-body">
-    <div class="login-card">
-        <div class="logo">FLY MARKET</div>
-        <p style="color: #94a3b8; margin-bottom: 20px;">تایبەت بە بریکاران</p>
-        <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
+
+<div class="login-card">
+    <div class="logo">FLY MARKET</div>
+    <p style="color: #94a3b8; margin-bottom: 20px;">تایبەت بە بریکاران و دوکاندارەکان</p>
+    
+    <div id="errorMessage" class="error-msg">ناوی بەکارهێنەر یان وشەی نهێنی هەڵەیە!</div>
+
+    <div class="input-group">
+        <input type="text" id="username" placeholder="ناوی بەکارهێنەر" autocomplete="off">
         <input type="password" id="password" placeholder="وشەی نهێنی">
-        <button class="btn-login" onclick="attemptLogin()">چوونەژوورەوە</button>
-        <div id="loginError" style="color: #ef4444; margin-top: 10px; display: none;">زانیارییەکان هەڵەیە!</div>
     </div>
+    
+    <button class="btn-login" onclick="validateLogin()">چوونەژوورەوە</button>
+    
+    <div class="login-footer">
+        <p>ئەگەر ئەکاونتت نییە، پەیوەندی بە ئەدمین بکە</p>
+        <a href="https://t.me/your_admin_username" target="_blank">تێلێگرامی ئەدمین</a>
+    </div>
+</div>
 
-    <script>
-        function attemptLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+<script>
+    function validateLogin() {
+        const userField = document.getElementById('username').value.trim();
+        const passField = document.getElementById('password').value.trim();
+        const errorDiv = document.getElementById('errorMessage');
 
-            // لێرەدا دەبێت لەگەڵ فایەربەیس بەراورد بکرێت، بۆ ئێستا ئەمە جدییە:
-            if(user && pass) {
-                localStorage.setItem("currentUser", user);
+        // سڕینەوەی نامەی هەڵەی پێشوو
+        errorDiv.style.display = 'none';
+
+        if (!userField || !passField) {
+            errorDiv.innerText = "تکایە خانەکان پڕ بکەرەوە!";
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        // گەڕان بەدوای ئەو ئەکاونتەی کە لە ئەدمین پانێڵ دروستکراوە
+        const storedAccount = localStorage.getItem(`account_${userField}`);
+
+        if (storedAccount) {
+            const accountData = JSON.parse(storedAccount);
+
+            // پشکنینی پاسورد
+            if (accountData.password === passField) {
+                // ئەگەر ڕاست بوو، ناوی یوزەرەکە سەیڤ دەکەین بۆ ناو داشبۆردەکە
+                localStorage.setItem("currentUser", userField);
+                
+                // گواستنەوە بۆ داشبۆردی دوکاندار
                 window.location.href = "shop_dashboard.html";
             } else {
-                document.getElementById('loginError').style.display = 'block';
+                // ئەگەر پاسورد هەڵە بوو
+                errorDiv.innerText = "وشەی نهێنی (پاسورد) هەڵەیە!";
+                errorDiv.style.display = 'block';
             }
+        } else {
+            // ئەگەر ناوی بەکارهێنەرەکە بوونی نەبوو لە ئەدمین پانێڵ
+            errorDiv.innerText = "ئەم ناوی بەکارهێنەرە بوونی نییە!";
+            errorDiv.style.display = 'block';
         }
-    </script>
+    }
+</script>
 </body>
 </html>
