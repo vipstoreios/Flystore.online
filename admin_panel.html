@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | FLY MARKET</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-grid { display: grid; grid-template-columns: 250px 1fr; gap: 20px; padding: 20px; }
+        .stat-card { background: #1e293b; padding: 20px; border-radius: 12px; border-top: 4px solid var(--main-blue); text-align: center; }
+        .form-group { background: #161d2f; padding: 20px; border-radius: 15px; margin-top: 20px; border: 1px solid #334155; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; 
+            border: 1px solid #334155; background: #0b0f19; color: white; 
+        }
+        .btn-add { background: #10b981; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; margin-top: 15px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #161d2f; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #1e293b; }
+        th { background: #1e3a8a; color: white; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">FLY MARKET [ADMIN]</div>
+    <div>سڵاو بەڕێوەبەر 👋</div>
+</header>
+
+<div class="admin-grid">
+    <aside class="sidebar">
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 15px; background: var(--main-blue); border-radius: 8px; margin-bottom: 10px;">📊 سەرپێچی گشتی</li>
+            <li style="padding: 15px;">🛒 بەڕێوەبردنی کۆدەکان</li>
+            <li style="padding: 15px;">💰 داواکارییەکانی پارە</li>
+            <li style="padding: 15px;">👥 کڕیارەکان</li>
+            <li style="padding: 15px; color: #ef4444;">❌ چوونە دەرەوە</li>
+        </ul>
+    </aside>
+
+    <main>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <div class="stat-card"><h3>کۆی فرۆشتن</h3><p style="font-size: 1.5rem; color: #10b981;">$1,250.00</p></div>
+            <div class="stat-card"><h3>کۆدە چالاکەکان</h3><p style="font-size: 1.5rem; color: var(--main-blue);">42 دانە</p></div>
+            <div class="stat-card"><h3>داواکاری چاوەڕوانکراو</h3><p style="font-size: 1.5rem; color: #f59e0b;">5 داوا</p></div>
+        </div>
+
+        <div class="form-group">
+            <h3>➕ زیادکردنی کۆدی نوێ بۆ لیستەکە</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <input type="text" id="pName" placeholder="ناوی بەرهەم (بۆ نموونە: PUBG UC)">
+                <input type="text" id="pPrice" placeholder="نرخ (بۆ نموونە: 15$)">
+            </div>
+            <textarea id="pDesc" rows="3" placeholder="وردەکاری کۆدەکە..."></textarea>
+            <button class="btn-add" onclick="addNewProduct()">بڵاوکردنەوەی کۆد</button>
+        </div>
+
+        <h3>📥 داواکارییەکانی پڕکردنەوەی باڵانس (Deposit Requests)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>کڕیار</th>
+                    <th>بڕی پارە</th>
+                    <th>ڕێگەی ناردن</th>
+                    <th>کردارەکان</th>
+                </tr>
+            </thead>
+            <tbody id="requestTable">
+                <tr>
+                    <td>@Ahmad_Player</td>
+                    <td>25.00$</td>
+                    <td>FastPay</td>
+                    <td>
+                        <button style="background:#10b981; border:none; color:white; padding:5px 10px; border-radius:5px;">قبوڵکردن</button>
+                        <button style="background:#ef4444; border:none; color:white; padding:5px 10px; border-radius:5px;">ڕەتکردنەوە</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+</div>
+
+<script>
+    function addNewProduct() {
+        alert("کۆدەکە بە سەرکەوتوویی زیادکرا! (تێبینی: چونکە Database نییە، کاتییە)");
+    }
+</script>
+
+</body>
+</html>
