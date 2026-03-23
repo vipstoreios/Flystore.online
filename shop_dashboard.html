@@ -42,17 +42,9 @@
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
         }
 
-        /* Hero/Stats */
-        .welcome-section {
-            padding: 30px 5%;
-            background: linear-gradient(to bottom, #161d2f, #0b0f19);
-            text-align: center;
-        }
-
-        /* Grid for Products */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             padding: 20px 5%;
         }
@@ -64,6 +56,7 @@
             border: 1px solid #1e293b;
             text-align: center;
             transition: 0.3s;
+            position: relative;
         }
 
         .product-card:hover {
@@ -73,9 +66,19 @@
 
         .price {
             color: var(--main-blue);
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: bold;
             margin: 15px 0;
+        }
+
+        .guarantee {
+            font-size: 0.85rem;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--main-blue);
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
         }
 
         .btn-buy {
@@ -89,25 +92,6 @@
             cursor: pointer;
         }
 
-        /* Floating Telegram Button */
-        .telegram-float {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: #229ED9;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 999;
-        }
-
-        /* Orders Table */
         .orders-section {
             margin: 40px 5%;
             background: var(--card-bg);
@@ -127,13 +111,20 @@
             border-bottom: 1px solid #1e293b;
         }
 
-        th { color: var(--main-blue); }
-
-        .status-badge {
-            background: #10b981;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+        .telegram-float {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #229ED9;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 999;
         }
     </style>
 </head>
@@ -141,32 +132,33 @@
 
 <header class="header-bar">
     <div style="font-size: 1.5rem; font-weight: bold; color: var(--main-blue);">FLY MARKET</div>
-    <div class="balance-box">باڵانسی تۆ: 245.50$</div>
+    <div class="balance-box" id="userBalance">باڵانس: 50,000 دینار</div>
 </header>
 
-<section class="welcome-section">
-    <h2>بەخێربێیتەوە، بریکار @Shop_Owner</h2>
-    <p style="color: #94a3b8;">هەموو کۆدەکان بە نرخی جوملە لێرە بەردەستە.</p>
+<section style="text-align: center; padding: 30px 5%;">
+    <h2>لیستی کۆدەکانی FLY STORE</h2>
+    <p style="color: #94a3b8;">نرخەکان بە دیناری عێراقی نوێکراونەتەوە.</p>
 </section>
 
 <div class="grid-container">
     <div class="product-card">
-        <h3>PUBG 660 UC</h3>
-        <p style="color: #94a3b8;">کۆدی جیهانی - گەیاندنی خێرا</p>
-        <div class="price">8.25$</div>
-        <button class="btn-buy" onclick="handleBuy('PUBG 660 UC', 8.25)">کڕین</button>
+        <span class="guarantee">دوو مانگ گەرەنتی</span>
+        <h3>کۆدی فڵای ستۆر (یەکسەر ئەکتیڤ)</h3>
+        <p style="color: #94a3b8; font-size: 0.9rem;">چالاکبوونی دەستبەجێ دوای کڕین</p>
+        <div class="price">9,750 IQD</div>
+        <button class="btn-buy" onclick="handleBuy('کۆدی فڵای ستۆر - ٢ مانگ', 9750)">کڕین</button>
     </div>
 
     <div class="product-card">
-        <h3>TikTok 1000 Coins</h3>
-        <p style="color: #94a3b8;">شەحنکردنەوەی ڕاستەوخۆ</p>
-        <div class="price :">12.00$</div>
-        <button class="btn-buy" onclick="handleBuy('TikTok 1000 Coins', 12.00)">کڕین</button>
+        <span class="guarantee" style="color: #f59e0b; border: 1px solid #f59e0b;">یەک مانگ گەرەنتی</span>
+        <h3>کۆدی فڵای ستۆر (دوای ٣ ڕۆژ)</h3>
+        <p style="color: #94a3b8; font-size: 0.9rem;">ئەکتیڤ بوون دوای ٣ ڕۆژ لە کڕین</p>
+        <div class="price">7,000 IQD</div> <button class="btn-buy" onclick="handleBuy('کۆدی فڵای ستۆر - ٣ ڕۆژ', 7000)">کڕین</button>
     </div>
 </div>
 
 <section class="orders-section">
-    <h3 style="border-right: 4px solid var(--main-blue); padding-right: 15px;">دوایین کڕینەکانت</h3>
+    <h3 style="border-right: 4px solid var(--main-blue); padding-right: 15px;">دوایین کڕینەکان</h3>
     <table>
         <thead>
             <tr>
@@ -177,32 +169,36 @@
             </tr>
         </thead>
         <tbody id="orderList">
-            <tr>
-                <td>PUBG 60 UC</td>
-                <td>2026/03/23</td>
-                <td>0.95$</td>
-                <td><span class="status-badge">نێردرا</span></td>
-            </tr>
-        </tbody>
+            </tbody>
     </table>
 </section>
 
 <a href="https://t.me/your_admin_username" target="_blank" class="telegram-float">
     <span>پەیوەندی بە ئەدمین</span>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" width="20" alt="TG">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" width="20">
 </a>
 
 <script>
+    let currentBalance = 50000; // باڵانسی گریمانەیی بە دینار
+
     function handleBuy(name, price) {
-        if(confirm(`ئایا دڵنیایت لە کڕینی ${name} بە نرخی ${price}$?`)) {
-            alert("سەرکەوتوو بوو! کۆدەکە لە مێژووی کڕینەکان زیاد کرا.");
-            // لێرەدا دەتوانیت بە JavaScript دێڕێکی نوێ بۆ خشتەکە زیاد بکەیت
+        if (currentBalance < price) {
+            alert("باڵانسی پێویستت نییە! تکایە پەیوەندی بە ئەدمین بکە.");
+            return;
+        }
+
+        if(confirm(`ئایا دڵنیایت لە کڕینی ${name} بە نرخی ${price.toLocaleString()} دینار؟`)) {
+            currentBalance -= price;
+            document.getElementById('userBalance').innerText = `باڵانس: ${currentBalance.toLocaleString()} دینار`;
+            
+            alert("کڕین سەرکەوتوو بوو!");
+            
             const table = document.getElementById('orderList');
             const row = `<tr>
                 <td>${name}</td>
                 <td>ئێستا</td>
-                <td>${price}$</td>
-                <td><span class="status-badge">نێردرا</span></td>
+                <td>${price.toLocaleString()} IQD</td>
+                <td><span style="background:#10b981; padding:4px 8px; border-radius:5px; font-size:0.8rem;">سەرکەوتوو</span></td>
             </tr>`;
             table.innerHTML = row + table.innerHTML;
         }
