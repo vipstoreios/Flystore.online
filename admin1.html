@@ -3,138 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly Admin | Gold Edition</title>
+    <title>Fly Admin | Gold V5.5</title>
     <style>
         :root { --bg: #050810; --card: #111827; --accent: #0ea5e9; --danger: #ef4444; --success: #22c55e; --text: #f8fafc; --border: #1f2937; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 10px; padding-bottom: 50px; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; }
         .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-box h3 { margin: 5px 0; color: var(--accent); font-size: 18px; }
         input, select, textarea { background: #050810; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; outline: none; }
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 16px; transition: 0.3s; }
+        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 16px; }
         .btn-add { background: var(--success); color: white; }
         .btn-primary { background: var(--accent); color: black; }
-        .btn-del { background: var(--danger); color: white; padding: 4px 8px; font-size: 11px; width: auto; border-radius: 5px; }
-        .scroll { max-height: 250px; overflow-y: auto; background: #050810; padding: 10px; border-radius: 10px; border: 1px solid var(--border); }
-        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #1f2937; }
+        .btn-del { background: var(--danger); color: white; padding: 5px; font-size: 11px; width: auto; border-radius: 5px; }
+        .scroll { max-height: 200px; overflow-y: auto; background: #050810; padding: 10px; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center; color:var(--accent); margin: 10px 0;">FLY ADMIN GOLD</h2>
+    <h2 style="text-align:center; color:var(--accent)">FLY ADMIN</h2>
     
     <div class="stats-grid">
-        <div class="stat-box">
-            <p style="font-size: 12px;">کۆی فرۆشراو</p>
-            <h3 id="stat_sold">0</h3>
-        </div>
-        <div class="stat-box">
-            <p style="font-size: 12px;">کۆدی ماوە</p>
-            <h3 id="stat_stock">0</h3>
-        </div>
-        <div class="stat-box">
-            <p style="font-size: 12px;">وەرگیراو (فرۆش)</p>
-            <h3 id="stat_earned" style="color: var(--success);">0</h3>
-        </div>
-        <div class="stat-box">
-            <p style="font-size: 12px;">ماوە لای بریکار</p>
-            <h3 id="stat_debt" style="color: #f59e0b;">0</h3>
-        </div>
+        <div class="stat-box"><p style="font-size:12px">وەرگیراو (فرۆش)</p><h3 id="earned">0</h3></div>
+        <div class="stat-box"><p style="font-size:12px">ماوە لای بریکار</p><h3 id="debt">0</h3></div>
+        <div class="stat-box"><p style="font-size:12px">کۆدی ماوە</p><h3 id="stock">0</h3></div>
+        <div class="stat-box"><p style="font-size:12px">کۆی فرۆشراو</p><h3 id="sold">0</h3></div>
     </div>
 
     <div class="card">
-        <h3 style="margin-top:0;">💳 زیادکردنی باڵانس (Charging)</h3>
+        <h3>💳 زیادکردنی باڵانس</h3>
         <select id="bal_user_select"></select>
-        <input type="number" id="bal_amount" placeholder="بڕی پارە (دینار)">
-        <button class="btn btn-primary" onclick="addBalance()">+ زیادکردنی باڵانس</button>
+        <input type="number" id="bal_amount" placeholder="بڕی پارە">
+        <button class="btn btn-primary" onclick="addBalance()">Update Balance</button>
     </div>
 
     <div class="card">
-        <h3 style="margin-top:0;">👤 بریکارەکان</h3>
-        <input type="text" id="u_name" placeholder="Username (بچووک)" autocapitalize="none">
+        <h3>👤 بریکارەکان</h3>
+        <input type="text" id="u_name" placeholder="Username" autocapitalize="none">
         <input type="text" id="u_pass" placeholder="Password">
         <button class="btn btn-add" onclick="addUser()">تۆمارکردنی یوزەر</button>
         <div id="userList" class="scroll"></div>
     </div>
 
     <div class="card">
-        <h3 style="margin-top:0;">🛍️ کۆگا و بەرهەم</h3>
+        <h3>🛍️ بەرهەم و کۆدەکان</h3>
         <input type="text" id="p_name" placeholder="ناوی بەرهەم">
         <input type="number" id="p_price" placeholder="نرخ">
-        <button class="btn btn-add" style="background:var(--accent); color:black;" onclick="addProduct()">دروستکردنی بەرهەم</button>
-        
-        <label style="font-size: 12px; color: #94a3b8;">هەڵبژاردنی بەرهەم بۆ کۆد:</label>
+        <button class="btn btn-add" style="background:var(--accent); color:black;" onclick="addProduct()">زیادکردنی بەرهەم</button>
         <select id="p_select" onchange="loadStock()"></select>
         <textarea id="bulk_codes" placeholder="کۆدەکان لێرە دانێ..."></textarea>
         <button class="btn btn-add" onclick="addCodes()">بارکردنی کۆدەکان</button>
         <div id="stockList" class="scroll"></div>
     </div>
 
-    <div class="card">
-        <h3 style="margin-top:0;">📊 لۆگی فرۆشتن</h3>
-        <div id="logTable" class="scroll" style="max-height: 300px;"></div>
-    </div>
-
 <script>
     window.onload = refresh;
+    function refresh() { renderUsers(); renderProducts(); updateStats(); }
 
-    function refresh() {
-        renderUsers();
-        renderProducts();
-        renderLogs();
-        updateStats();
-    }
-
-    // --- دارایی و ئامار ---
     function updateStats() {
         let logs = JSON.parse(localStorage.getItem('logs') || "[]");
         let prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        
-        let earned = 0;
-        logs.forEach(l => { earned += (l.price || 0); });
-        document.getElementById('stat_earned').innerText = earned.toLocaleString();
-        document.getElementById('stat_sold').innerText = logs.length;
-
-        let totalStock = 0;
-        prods.forEach(p => {
-            let stk = JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]");
-            totalStock += stk.length;
-        });
-        document.getElementById('stat_stock').innerText = totalStock;
-
-        let debt = 0;
-        for (let i=0; i<localStorage.length; i++) {
-            let k = localStorage.key(i);
-            if(k.startsWith('acc_')) {
-                debt += JSON.parse(localStorage.getItem(k)).bal;
-            }
+        let earned = 0; logs.forEach(l => { earned += (l.price || 0); });
+        document.getElementById('earned').innerText = earned.toLocaleString();
+        document.getElementById('sold').innerText = logs.length;
+        let totalStock = 0; prods.forEach(p => { totalStock += JSON.parse(localStorage.getItem(`stk_${p.id}`) || "[]").length; });
+        document.getElementById('stock').innerText = totalStock;
+        let debt = 0; for (let i=0; i<localStorage.length; i++) {
+            let k = localStorage.key(i); if(k.startsWith('acc_')) debt += JSON.parse(localStorage.getItem(k)).bal;
         }
-        document.getElementById('stat_debt').innerText = debt.toLocaleString();
+        document.getElementById('debt').innerText = debt.toLocaleString();
     }
 
-    // --- زیادکردنی باڵانس ---
     function addBalance() {
         let u = document.getElementById('bal_user_select').value;
         let amt = parseInt(document.getElementById('bal_amount').value);
-        if(!u || !amt) return alert("زانیارییەکان تەواو نییە");
-        
-        let data = JSON.parse(localStorage.getItem(`acc_${u}`));
-        data.bal += amt;
-        localStorage.setItem(`acc_${u}`, JSON.stringify(data));
-        
-        document.getElementById('bal_amount').value = "";
-        alert(`بڕی ${amt} بۆ ${u} زیادکرا`);
-        refresh();
+        if(!u || !amt) return;
+        let d = JSON.parse(localStorage.getItem(`acc_${u}`));
+        d.bal += amt; localStorage.setItem(`acc_${u}`, JSON.stringify(d));
+        alert("باڵانس زیادکرا"); refresh();
     }
 
-    // --- بریکارەکان ---
     function addUser() {
         let u = document.getElementById('u_name').value.trim().toLowerCase();
         let p = document.getElementById('u_pass').value.trim();
         if(!u || !p) return;
         localStorage.setItem(`acc_${u}`, JSON.stringify({pass:p, bal:0}));
-        document.getElementById('u_name').value = "";
-        document.getElementById('u_pass').value = "";
         refresh();
     }
 
@@ -142,22 +94,17 @@
         const div = document.getElementById('userList');
         const select = document.getElementById('bal_user_select');
         div.innerHTML = ""; select.innerHTML = "";
-        
         for (let i=0; i<localStorage.length; i++) {
-            let k = localStorage.key(i);
-            if(k.startsWith('acc_')) {
-                let name = k.replace('acc_','');
-                let d = JSON.parse(localStorage.getItem(k));
-                div.innerHTML += `<div class="user-row">
-                    <span>${name} (<b style="color:var(--accent)">${d.bal.toLocaleString()}</b>)</span>
-                    <button class="btn-del" onclick="if(confirm('سڕینەوە؟')){localStorage.removeItem('${k}'); refresh();}">X</button>
-                </div>`;
+            let k = localStorage.key(i); if(k.startsWith('acc_')) {
+                let name = k.replace('acc_',''); let d = JSON.parse(localStorage.getItem(k));
+                div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #1f2937;">
+                <span>${name} (${d.bal.toLocaleString()})</span>
+                <button class="btn-del" onclick="localStorage.removeItem('${k}'); refresh();">X</button></div>`;
                 select.innerHTML += `<option value="${name}">${name}</option>`;
             }
         }
     }
 
-    // --- بەرهەمەکان ---
     function addProduct() {
         let n = document.getElementById('p_name').value;
         let p = document.getElementById('p_price').value;
@@ -167,15 +114,12 @@
         prods.push({id, n, p:parseInt(p)});
         localStorage.setItem('prods', JSON.stringify(prods));
         localStorage.setItem(`stk_${id}`, "[]");
-        document.getElementById('p_name').value = "";
-        document.getElementById('p_price').value = "";
         refresh();
     }
 
     function renderProducts() {
         const prods = JSON.parse(localStorage.getItem('prods') || "[]");
-        const select = document.getElementById('p_select');
-        select.innerHTML = prods.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
+        document.getElementById('p_select').innerHTML = prods.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
     }
 
     function addCodes() {
@@ -185,21 +129,13 @@
         let newC = raw.split('\n').map(x => x.trim()).filter(x => x.length > 0);
         let old = JSON.parse(localStorage.getItem(`stk_${id}`) || "[]");
         localStorage.setItem(`stk_${id}`, JSON.stringify([...old, ...newC]));
-        document.getElementById('bulk_codes').value = "";
-        alert("کۆدەکان بارکران"); refresh(); loadStock();
+        document.getElementById('bulk_codes').value = ""; refresh(); loadStock();
     }
 
     function loadStock() {
         const id = document.getElementById('p_select').value;
         let stk = JSON.parse(localStorage.getItem(`stk_${id}`) || "[]");
         document.getElementById('stockList').innerHTML = stk.map(c => `<div style="font-size:12px; padding:5px; border-bottom:1px solid #1f2937;">${c}</div>`).join('');
-    }
-
-    function renderLogs() {
-        const logs = JSON.parse(localStorage.getItem('logs') || "[]");
-        document.getElementById('logTable').innerHTML = logs.reverse().map(l => `<div style="font-size:11px; margin-bottom:10px; border-bottom:1px solid #1f2937;">
-            <b style="color:var(--accent)">${l.u}</b> کڕی: ${l.p} <br> کۆد: ${l.c} <br> نرخ: ${l.price} | کات: ${l.d}
-        </div>`).join('');
     }
 </script>
 </body>
