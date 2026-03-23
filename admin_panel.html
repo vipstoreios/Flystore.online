@@ -2,144 +2,186 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Fly Store Admin | دەسەڵاتی تەواو</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fly Store Admin | کۆنترۆڵی گشتی</title>
     <style>
-        /* ستایل بۆ خشتەی بەرهەمەکان */
-        .product-list-item {
-            background: #0f172a;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #334155;
-        }
-        .stock-count {
-            background: #38bdf8;
-            color: #000;
-            padding: 2px 8px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --danger: #f43f5e; --success: #10b981; --text: #f1f5f9; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; display: flex; }
+        
+        .sidebar { width: 260px; background: var(--card); height: 100vh; position: fixed; border-left: 1px solid #334155; padding: 20px; box-sizing: border-box; }
+        .main-content { margin-right: 260px; padding: 30px; width: 100%; box-sizing: border-box; }
+        
+        .admin-card { background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 25px; box-shadow: 0 10px 15px rgba(0,0,0,0.2); }
+        h2 { color: var(--accent); font-size: 1.3rem; margin-top: 0; border-right: 4px solid var(--accent); padding-right: 15px; }
+        
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        input, select, textarea { background: #0f172a; border: 1px solid #475569; color: white; padding: 12px; border-radius: 8px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
+        
+        .btn { padding: 12px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 10px; }
+        .btn-add { background: var(--success); color: white; }
+        .btn-primary { background: var(--accent); color: #0f172a; }
+        .btn-danger { background: var(--danger); color: white; padding: 6px 12px; width: auto; font-size: 0.8rem; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #334155; }
+        th { color: var(--accent); font-size: 0.9rem; background: rgba(56, 189, 248, 0.05); }
+
+        .list-item { background: #0f172a; padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
+        .stock-tag { background: var(--accent); color: #000; padding: 2px 8px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="main-content" style="margin: auto; max-width: 900px; padding: 20px;">
+<div class="sidebar">
+    <h1 style="color: var(--accent); text-align: center; font-size: 1.6rem;">FLY STORE</h1>
+    <p style="text-align: center; color: #94a3b8;">پانێڵی بەڕێوەبەر</p>
+    <hr style="border: 0.5px solid #334155; margin: 20px 0;">
+    <button class="btn btn-primary" onclick="location.reload()">Refresh Data</button>
+</div>
+
+<div class="main-content">
     
     <div class="admin-card">
-        <h2>🛍️ بەڕێوەبردنی بەرهەمەکان</h2>
+        <h2>👤 زیادکردنی بریکار (Account)</h2>
         <div class="input-grid">
-            <input type="text" id="p_name" placeholder="ناوی بەرهەم">
-            <input type="number" id="p_price" placeholder="نرخ">
-            <input type="text" id="p_guar" placeholder="گەرەنتی">
+            <input type="text" id="u_name" placeholder="ناوی بەکارهێنەر">
+            <input type="password" id="u_pass" placeholder="وشەی نهێنی">
+            <input type="number" id="u_bal" placeholder="باڵانس (دینار)">
         </div>
-        <button class="btn btn-primary" onclick="addNewProduct()" style="margin-top:10px;">+ زیادکردنی بەرهەمی نوێ</button>
-        
-        <div id="productListDisplay" style="margin-top: 20px;">
-            </div>
+        <button class="btn btn-add" onclick="createAccount()">دروستکردنی ئەکاونت</button>
+        <table id="userTable">
+            <thead><tr><th>ناو</th><th>پاسورد</th><th>باڵانس</th><th>کردار</th></tr></thead>
+            <tbody></tbody>
+        </table>
     </div>
 
     <div class="admin-card">
-        <h2>🔑 زیادکردنی کۆد بۆ کۆگا</h2>
-        <p style="font-size: 0.8rem; color: #94a3b8;">بەرهەمەکە هەڵبژێرە و کۆدەکان لێرە دابنێ</p>
-        <select id="select_product"></select>
-        <textarea id="bulk_codes" style="height: 100px; margin-top:10px;" placeholder="کۆدەکان لێرە دانێ (هەر دێڕێک و کۆدێک)"></textarea>
-        <button class="btn btn-success" onclick="uploadCodes()" style="margin-top:10px;">بارکردنی کۆدەکان</button>
+        <h2>🛍️ دروستکردن و سڕینەوەی بەرهەم</h2>
+        <div class="input-grid">
+            <input type="text" id="p_name" placeholder="ناوی بەرهەم">
+            <input type="number" id="p_price" placeholder="نرخ بە دینار">
+            <input type="text" id="p_guar" placeholder="گەرەنتی">
+        </div>
+        <button class="btn btn-primary" onclick="addProduct()">زیادکردنی بەرهەم بۆ لیست</button>
+        <div id="productDisplayList" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="admin-card">
+        <h2>🔑 زیادکردنی کۆد (Stock)</h2>
+        <select id="p_select" style="margin-bottom: 10px;"></select>
+        <textarea id="bulk_codes" rows="4" placeholder="کۆدەکان لێرە دابنێ (هەر کۆدێک لە دێڕێک)"></textarea>
+        <button class="btn btn-add" onclick="uploadCodes()">بارکردنی کۆدەکان</button>
+    </div>
+
+    <div class="admin-card">
+        <h2>📊 هەموو کڕینەکان</h2>
+        <table id="logTable">
+            <thead><tr><th>بریکار</th><th>بەرهەم</th><th>کۆد</th><th>بەروار</th></tr></thead>
+            <tbody></tbody>
+        </table>
     </div>
 
 </div>
 
 <script>
-    window.onload = function() { refreshAdmin(); };
+    window.onload = function() { refresh(); };
 
-    function refreshAdmin() {
-        renderProductList(); // بۆ سڕینەوە
-        loadProductSelect(); // بۆ هەڵبژاردنی کۆد
+    function refresh() {
+        renderUsers();
+        renderProducts();
+        renderLogs();
     }
 
-    // زیادکردنی بەرهەمی نوێ
-    function addNewProduct() {
-        const name = document.getElementById('p_name').value;
-        const price = document.getElementById('p_price').value;
-        const guar = document.getElementById('p_guar').value;
-
-        if(!name || !price) return alert("زانیارییەکان تەواو نین");
-
-        let products = JSON.parse(localStorage.getItem("store_products") || "[]");
-        const newProd = { id: "ID" + Date.now(), name, price: parseInt(price), guarantee: guar };
-        products.push(newProd);
-        
-        localStorage.setItem("store_products", JSON.stringify(products));
-        
-        // دروستکردنی شوێنی کۆد بۆ ئەم بەرهەمە
-        localStorage.setItem(`stock_${newProd.id}`, JSON.stringify([]));
-
-        alert("بەرهەم زیادکرا");
-        document.getElementById('p_name').value = "";
-        refreshAdmin();
+    // --- یوزەر ---
+    function createAccount() {
+        const u = document.getElementById('u_name').value.trim();
+        const p = document.getElementById('u_pass').value.trim();
+        const b = document.getElementById('u_bal').value;
+        if(!u || !p || !b) return alert("خانەکان پڕ بکەرەوە");
+        localStorage.setItem(`account_${u}`, JSON.stringify({ password: p, balance: parseInt(b) }));
+        refresh();
     }
 
-    // نیشاندانی لیستی بەرهەمەکان بۆ سڕینەوە
-    function renderProductList() {
-        const products = JSON.parse(localStorage.getItem("store_products") || "[]");
-        const display = document.getElementById('productListDisplay');
-        display.innerHTML = "<h4>کاڵاکانی ئێستا:</h4>";
-
-        products.forEach(p => {
-            const stock = JSON.parse(localStorage.getItem(`stock_${p.id}`) || "[]");
-            display.innerHTML += `
-                <div class="product-list-item">
-                    <span>${p.name} - <b>${p.price} IQD</b> <span class="stock-count">${stock.length} دانە</span></span>
-                    <button class="btn-danger" onclick="deleteProduct('${p.id}')">سڕینەوە</button>
-                </div>
-            `;
-        });
-    }
-
-    // سڕینەوەی بەرهەم
-    function deleteProduct(id) {
-        if(confirm("دڵنیایت لە سڕینەوەی ئەم بەرهەمە و کۆدەکانی؟")) {
-            // سڕینەوە لە لیستی بەرهەمەکان
-            let products = JSON.parse(localStorage.getItem("store_products") || "[]");
-            products = products.filter(p => p.id !== id);
-            localStorage.setItem("store_products", JSON.stringify(products));
-
-            // سڕینەوەی کۆگای ئەم بەرهەمە
-            localStorage.removeItem(`stock_${id}`);
-
-            refreshAdmin();
+    function renderUsers() {
+        const tbody = document.querySelector("#userTable tbody");
+        tbody.innerHTML = "";
+        for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i);
+            if (key.startsWith("account_")) {
+                let name = key.replace("account_", "");
+                let data = JSON.parse(localStorage.getItem(key));
+                tbody.innerHTML += `<tr><td>${name}</td><td>${data.password}</td><td>${data.balance.toLocaleString()}</td>
+                <td><button class="btn-danger" onclick="deleteItem('${key}')">سڕینەوە</button></td></tr>`;
+            }
         }
     }
 
-    // پڕکردنەوەی مینیوی هەڵبژاردن بۆ کۆدەکان
-    function loadProductSelect() {
-        const select = document.getElementById('select_product');
-        const products = JSON.parse(localStorage.getItem("store_products") || "[]");
-        select.innerHTML = products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+    // --- بەرهەم ---
+    function addProduct() {
+        const name = document.getElementById('p_name').value;
+        const price = document.getElementById('p_price').value;
+        const guar = document.getElementById('p_guar').value;
+        if(!name || !price) return alert("ناو و نرخ بنووسە");
+        
+        let prods = JSON.parse(localStorage.getItem("store_products") || "[]");
+        const id = "P" + Date.now();
+        prods.push({ id, name, price: parseInt(price), guarantee: guar });
+        localStorage.setItem("store_products", JSON.stringify(prods));
+        localStorage.setItem(`stock_${id}`, JSON.stringify([]));
+        refresh();
     }
 
-    // بارکردنی کۆدەکان بۆ ناو بەرهەمی هەڵبژێردراو
+    function renderProducts() {
+        const prods = JSON.parse(localStorage.getItem("store_products") || "[]");
+        const list = document.getElementById('productDisplayList');
+        const select = document.getElementById('p_select');
+        
+        list.innerHTML = "";
+        select.innerHTML = "";
+        
+        prods.forEach(p => {
+            const stock = JSON.parse(localStorage.getItem(`stock_${p.id}`) || "[]");
+            list.innerHTML += `<div class="list-item">
+                <span>${p.name} - ${p.price} IQD <span class="stock-tag">${stock.length} کۆد</span></span>
+                <button class="btn-danger" onclick="deleteProduct('${p.id}')">سڕینەوە</button>
+            </div>`;
+            select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+        });
+    }
+
+    function deleteProduct(id) {
+        if(confirm("دڵنیایت لە سڕینەوە؟")) {
+            let prods = JSON.parse(localStorage.getItem("store_products") || "[]");
+            prods = prods.filter(p => p.id !== id);
+            localStorage.setItem("store_products", JSON.stringify(prods));
+            localStorage.removeItem(`stock_${id}`);
+            refresh();
+        }
+    }
+
+    // --- کۆدەکان ---
     function uploadCodes() {
-        const pId = document.getElementById('select_product').value;
+        const id = document.getElementById('p_select').value;
         const raw = document.getElementById('bulk_codes').value.trim();
+        if(!id || !raw) return alert("بەرهەم و کۆدەکان دیاری بکە");
         
-        if(!pId) return alert("تکایە سەرەتا بەرهەمێک دروست بکە");
-        if(!raw) return alert("کۆدەکان بنووسە");
-
         let newCodes = raw.split('\n').filter(c => c.trim() !== "");
-        let currentStock = JSON.parse(localStorage.getItem(`stock_${pId}`) || "[]");
-        
-        localStorage.setItem(`stock_${pId}`, JSON.stringify([...currentStock, ...newCodes]));
-        
-        alert(`${newCodes.length} کۆد بە سەرکەوتوویی زیادکرا`);
+        let current = JSON.parse(localStorage.getItem(`stock_${id}`) || "[]");
+        localStorage.setItem(`stock_${id}`, JSON.stringify([...current, ...newCodes]));
         document.getElementById('bulk_codes').value = "";
-        refreshAdmin();
+        alert("کۆدەکان زیادکران");
+        refresh();
     }
-</script>
 
+    // --- ڕاپۆرت ---
+    function renderLogs() {
+        const logs = JSON.parse(localStorage.getItem("global_sales") || "[]");
+        document.querySelector("#logTable tbody").innerHTML = logs.reverse().map(l => `
+            <tr><td>${l.user}</td><td>${l.productName}</td><td>${l.code}</td><td>${l.date}</td></tr>
+        `).join('');
+    }
+
+    function deleteItem(key) { if(confirm("دڵنیایت؟")) { localStorage.removeItem(key); refresh(); } }
+</script>
 </body>
 </html>
