@@ -2,35 +2,34 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fly Market | Login</title>
     <style>
-        body { background: #050810; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
-        .box { background: #111827; padding: 40px; border-radius: 25px; border: 1px solid #1f2937; width: 350px; text-align: center; }
-        input { background: #050810; border: 1px solid #1f2937; color: white; padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px; }
-        .btn { background: #0ea5e9; color: black; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; }
-        .err { color: #ef4444; font-size: 0.8rem; margin-bottom: 10px; display: none; }
+        body { background: #050810; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; margin: 0; }
+        .box { background: #111827; padding: 30px; border-radius: 20px; border: 1px solid #1f2937; width: 90%; max-width: 350px; text-align: center; }
+        input { background: #050810; border: 1px solid #1f2937; color: white; padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; }
+        .btn { background: #0ea5e9; color: black; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; }
     </style>
 </head>
 <body>
 <div class="box">
     <h1 style="color:#0ea5e9">FLY MARKET</h1>
-    <div id="msg" class="err">Username or Password Wrong!</div>
-    <input type="text" id="user" placeholder="ناوی بەکارهێنەر">
+    <input type="text" id="user" placeholder="ناوی بەکارهێنەر" autocapitalize="none">
     <input type="password" id="pass" placeholder="وشەی نهێنی">
     <button class="btn" onclick="login()">چوونەژوورەوە</button>
 </div>
 <script>
     function login() {
-        let u = document.getElementById('user').value;
-        let p = document.getElementById('pass').value;
+        let u = document.getElementById('user').value.trim().toLowerCase();
+        let p = document.getElementById('pass').value.trim();
         let data = localStorage.getItem(`acc_${u}`);
         if(data) {
             let d = JSON.parse(data);
             if(d.pass === p) {
                 localStorage.setItem('session', u);
                 window.location.href = "shop_dashboard.html";
-            } else { document.getElementById('msg').style.display='block'; }
-        } else { document.getElementById('msg').style.display='block'; }
+            } else { alert("پاسورد هەڵەیە!"); }
+        } else { alert("ئەم یوزەرە بوونی نییە!"); }
     }
 </script>
 </body>
