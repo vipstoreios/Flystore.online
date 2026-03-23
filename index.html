@@ -7,7 +7,7 @@
     <style>
         body { background: #050810; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; margin: 0; }
         .box { background: #111827; padding: 30px; border-radius: 20px; border: 1px solid #1f2937; width: 90%; max-width: 350px; text-align: center; }
-        input { background: #050810; border: 1px solid #1f2937; color: white; padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; }
+        input { background: #050810; border: 1px solid #1f2937; color: white; padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; outline: none; }
         .btn { background: #0ea5e9; color: black; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; }
     </style>
 </head>
@@ -29,7 +29,7 @@
                 localStorage.setItem('session', u);
                 window.location.href = "shop_dashboard.html";
             } else { alert("پاسورد هەڵەیە!"); }
-        } else { alert("ئەم یوزەرە بوونی نییە!"); }
+        } else { alert("ئەم یوزەرە بوونی نییە لە سیستمدا!"); }
     }
 </script>
 </body>
